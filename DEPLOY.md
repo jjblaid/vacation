@@ -212,7 +212,7 @@ http://your-server/vacation/
 | 검토자 | reviewer | 전직원 | 전직원 | ✓ | ✗ | ✗ |
 | 관리자 | dept_manager | 본인 부서 | 본인 부서 | ✗ | ✗ | ✗ |
 | 대표이사 | ceo | 팀장급 이상 + 부대표 + visible_to_exec=1 | ✗ | ✗ | ✗ | ✗ |
-| 부대표 | vice_president | 투자본부(INV001, INV002) + visible_to_exec=1 | ✗ | ✗ | ✗ | ✗ |
+| 부대표 | vice_president | 전직원 | 전직원 | ✗ | ✗ | ✗ |
 | 사용자 | user | 본인만 | ✗ | ✗ | ✗ | ✗ |
 
 ### 8.2 역할별 휴가 신청 권한

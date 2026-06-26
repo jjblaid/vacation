@@ -55,13 +55,13 @@ function showApp() {
         document.getElementById('adminLink').classList.add('hidden');
     }
     
-    if (['system_admin', 'reviewer', 'dept_manager'].includes(currentUser.role)) {
+    if (['system_admin', 'reviewer', 'dept_manager', 'vice_president'].includes(currentUser.role)) {
         document.getElementById('annualLeaveBtn').classList.remove('hidden');
     } else {
         document.getElementById('annualLeaveBtn').classList.add('hidden');
     }
     
-    if (['system_admin', 'reviewer'].includes(currentUser.role)) {
+    if (['system_admin', 'reviewer', 'vice_president'].includes(currentUser.role)) {
         loadDeptFilter();
     }
 }
@@ -237,7 +237,7 @@ function toggleMyVacationOnly() {
         if (deptFilter) { deptFilter.style.display = 'none'; deptFilter.value = ''; }
         if (empFilter) { empFilter.style.display = 'none'; empFilter.value = ''; }
     } else {
-        if (deptFilter && ['system_admin', 'reviewer'].includes(currentUser.role)) {
+        if (deptFilter && ['system_admin', 'reviewer', 'vice_president'].includes(currentUser.role)) {
             deptFilter.style.display = 'block';
         }
         if (empFilter && currentUser.role !== 'user') {

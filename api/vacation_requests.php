@@ -108,9 +108,7 @@ function getList() {
                 $conditions[] = "((p.sort_order <= 9 AND p.sort_order >= 3) OR p.name = '부대표' OR e.visible_to_exec = 1)";
                 break;
             case 'vice_president':
-                // 투자본부 모두 보기 + 본인 + 김은솔
-                $conditions[] = "(d.code IN ('INV001', 'INV002') OR vr.employee_id = ? OR e.visible_to_exec = 1)";
-                $params[] = $user['id'];
+                // 전직원 조회
                 break;
             case 'dept_manager':
                 $conditions[] = "e.department_id = ?";
@@ -182,9 +180,7 @@ function getCalendarEvents() {
             $sql .= " AND ((p.sort_order <= 9 AND p.sort_order >= 3) OR p.name = '부대표' OR e.visible_to_exec = 1)";
             break;
         case 'vice_president':
-            // 투자본부 모두 보기 + 본인 + 김은솔
-            $sql .= " AND (d.code IN ('INV001', 'INV002') OR vr.employee_id = ? OR e.visible_to_exec = 1)";
-            $params[] = $user['id'];
+            // 전직원 조회
             break;
         case 'dept_manager':
             $sql .= " AND e.department_id = ?";
@@ -1347,7 +1343,7 @@ function getEmployeeAnnualList() {
     $user = $_SESSION['user'];
     $year = intval($_GET['year'] ?? date('Y'));
 
-    $allowedRoles = ['system_admin', 'reviewer', 'dept_manager'];
+    $allowedRoles = ['system_admin', 'reviewer', 'dept_manager', 'vice_president'];
     if (!in_array($user['role'], $allowedRoles)) {
         http_response_code(403);
         echo json_encode(['error' => '권한이 없습니다.']);
@@ -1504,8 +1500,7 @@ function getEmployeeLeave() {
                                 $emp['sort_order'] == 3 || 
                                 $emp['visible_to_exec'] == 1;
             } else if ($user['role'] === 'vice_president') {
-                // 투자본부(INV001, INV002) 소속 또는 김은솔 확인
-                $hasPermission = in_array($emp['code'], ['INV001', 'INV002']) || $emp['visible_to_exec'] == 1;
+                $hasPermission = true;
             }
             
             if (!$hasPermission) {

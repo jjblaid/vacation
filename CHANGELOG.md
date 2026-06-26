@@ -1,5 +1,11 @@
 # 변경 이력
 
+## v1.14 (2026-06-26) — 부대표 권한 확대
+- 부대표(vice_president): 휴가 목록/캘린더/연차현황 전직원 조회 가능으로 변경
+- `api/vacation_requests.php`: `getList()`, `getCalendarEvents()`, `getEmployeeLeave()`, `getEmployeeAnnualList()` 수정
+- `js/main.js`: 연차현황 버튼/부서필터 VP 표시
+- `DEPLOY.md`, `SPEC.md`: 권한 테이블 업데이트
+
 ## v1.13 (2026-06-24) — ZAP 보안 취약점 수정
 - `config/security.php`: 신규 — 중앙 보안 헤더 (CSP, X-Frame-Options, X-Content-Type-Options, expose_php, header_remove X-Powered-By)
 - 모든 PHP 진입점: `config/security.php` include 추가 (13개 파일)
