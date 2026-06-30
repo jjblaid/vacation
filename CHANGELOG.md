@@ -1,5 +1,11 @@
 # 변경 이력
 
+## v1.15 (2026-06-26) — 로그인 로그 + 현재 접속자 페이지
+- `login_log` 테이블 신규: 로그인/로그아웃/활동시간 기록
+- `api/auth.php`: `login()` (INSERT + 부서명 JOIN), `logout()` (UPDATE), `checkSession()` (last_activity UPDATE)
+- `login_status.php`: system_admin 전용 접속자 현황 페이지 (15초 자동 갱신)
+- `init_db.sql`: login_log 테이블 추가
+
 ## v1.14 (2026-06-26) — 부대표 권한 확대
 - 부대표(vice_president): 휴가 목록/캘린더/연차현황 전직원 조회 가능으로 변경
 - `api/vacation_requests.php`: `getList()`, `getCalendarEvents()`, `getEmployeeLeave()`, `getEmployeeAnnualList()` 수정

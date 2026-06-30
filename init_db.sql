@@ -174,3 +174,23 @@ CREATE TABLE IF NOT EXISTS support_requests (
     CONSTRAINT support_requests_ibfk_1 FOREIGN KEY (employee_id) REFERENCES employees(id),
     CONSTRAINT support_requests_ibfk_2 FOREIGN KEY (processed_by) REFERENCES employees(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE IF NOT EXISTS login_log (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    employee_id INT NOT NULL COMMENT '사원 ID',
+    emp_no VARCHAR(20) NOT NULL COMMENT '사번',
+    name VARCHAR(100) NOT NULL COMMENT '이름',
+    role VARCHAR(30) NOT NULL COMMENT '권한',
+    department_name VARCHAR(100) DEFAULT NULL COMMENT '부서명',
+    login_at DATETIME NOT NULL COMMENT '로그인 시간',
+    last_activity DATETIME NOT NULL COMMENT '마지막 활동 시간',
+    logout_at DATETIME DEFAULT NULL COMMENT '로그아웃 시간',
+    session_id VARCHAR(255) NOT NULL COMMENT '세션 ID',
+    ip_address VARCHAR(45) DEFAULT NULL COMMENT 'IP 주소',
+    INDEX idx_session_id (session_id),
+    INDEX idx_last_activity (last_activity),
+    INDEX idx_logout_at (logout_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 참고: login_log는 지속적으로 쌓이므로 주기적인 정리가 필요합니다
+-- DELETE FROM login_log WHERE login_at < DATE_SUB(NOW(), INTERVAL 90 DAY);

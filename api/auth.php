@@ -82,7 +82,10 @@ function login() {
     }
 
     $db = getDB();
-    $stmt = $db->prepare("SELECT * FROM employees WHERE emp_no = ? AND is_active = 1");
+    $stmt = $db->prepare("SELECT e.*, d.name as department_name
+                           FROM employees e
+                           LEFT JOIN departments d ON e.department_id = d.id
+                           WHERE e.emp_no = ? AND e.is_active = 1");
     $stmt->execute([$emp_no]);
     $user = $stmt->fetch();
 
@@ -106,6 +109,12 @@ function login() {
     ];
     
     generateCsrfToken();
+
+    $db->prepare("INSERT INTO login_log (employee_id, emp_no, name, role, department_name, login_at, last_activity, session_id, ip_address)
+                   VALUES (?, ?, ?, ?, ?, NOW(), NOW(), ?, ?)")
+       ->execute([$user['id'], $user['emp_no'], $user['name'], $user['role'],
+                  $user['department_name'] ?? null, session_id(),
+                  $_SERVER['REMOTE_ADDR'] ?? null]);
     
     echo json_encode([
         'success' => true,
@@ -115,6 +124,10 @@ function login() {
 }
 
 function logout() {
+    $sid = session_id();
+    $db = getDB();
+    $db->prepare("UPDATE login_log SET logout_at = NOW() WHERE session_id = ? AND logout_at IS NULL")
+       ->execute([$sid]);
     $params = session_get_cookie_params();
     setcookie(session_name(), '', time() - 3600, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
     session_destroy();
@@ -127,6 +140,8 @@ function checkSession() {
         autoCreateNextYearLeave();
         
         $db = getDB();
+        $db->prepare("UPDATE login_log SET last_activity = NOW() WHERE session_id = ? AND logout_at IS NULL")
+           ->execute([session_id()]);
         $currentYear = date('Y');
         
         $stmt = $db->prepare("SELECT annual_leave FROM annual_by_year WHERE employee_id = ? AND year = ?");
