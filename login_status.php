@@ -11,11 +11,13 @@ require_once 'config/security.php';
 require_once 'config/database.php';
 
 $view = $_GET['view'] ?? 'active';
+$year = intval($_GET['year'] ?? date('Y'));
+$month = intval($_GET['month'] ?? date('n'));
 $db = getDB();
 
 if ($view === 'all') {
-    $stmt = $db->prepare("SELECT * FROM login_log WHERE login_at > DATE_SUB(NOW(), INTERVAL 90 DAY) ORDER BY login_at DESC");
-    $stmt->execute();
+    $stmt = $db->prepare("SELECT * FROM login_log WHERE YEAR(login_at) = ? AND MONTH(login_at) = ? ORDER BY login_at DESC");
+    $stmt->execute([$year, $month]);
 } else {
     $stmt = $db->prepare("SELECT * FROM login_log WHERE logout_at IS NULL AND last_activity > DATE_SUB(NOW(), INTERVAL 30 MINUTE) ORDER BY login_at DESC");
     $stmt->execute();
@@ -32,6 +34,8 @@ $roleNames = [
 ];
 
 $isActiveView = $view !== 'all';
+
+function selected($a, $b) { return $a == $b ? 'selected' : ''; }
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -78,7 +82,22 @@ $isActiveView = $view !== 'all';
                 </div>
                 <div class="tabs" style="padding:0 24px;">
                     <a href="login_status.php" class="<?= $isActiveView ? 'active' : '' ?>">🟢 현재 접속자</a>
-                    <a href="login_status.php?view=all" class="<?= !$isActiveView ? 'active' : '' ?>">📋 전체 이력 (90일)</a>
+                    <a href="login_status.php?view=all" class="<?= !$isActiveView ? 'active' : '' ?>">📋 전체 이력</a>
+<?php if (!$isActiveView): ?>
+                    <form method="get" action="login_status.php" style="display:flex;gap:6px;margin-left:auto;">
+                        <input type="hidden" name="view" value="all">
+                        <select name="year" onchange="this.form.submit()" style="padding:6px 10px;border-radius:6px;border:1px solid #e2e8f0;font-size:13px;">
+<?php for ($y = intval(date('Y')); $y >= intval(date('Y')) - 5; $y--): ?>
+                            <option value="<?= $y ?>" <?= selected($y, $year) ?>><?= $y ?>년</option>
+<?php endfor; ?>
+                        </select>
+                        <select name="month" onchange="this.form.submit()" style="padding:6px 10px;border-radius:6px;border:1px solid #e2e8f0;font-size:13px;">
+<?php for ($m = 1; $m <= 12; $m++): ?>
+                            <option value="<?= $m ?>" <?= selected($m, $month) ?>><?= $m ?>월</option>
+<?php endfor; ?>
+                        </select>
+                    </form>
+<?php endif; ?>
                 </div>
             </div>
             <div class="section-body">
@@ -101,7 +120,7 @@ $isActiveView = $view !== 'all';
                         </thead>
                         <tbody>
 <?php if (count($sessions) === 0): ?>
-                            <tr><td colspan="<?= $isActiveView ? 7 : 9 ?>" style="text-align:center;color:#94a3b8;"><?= $isActiveView ? '접속 중인 사용자가 없습니다.' : '최근 90일간 접속 기록이 없습니다.' ?></td></tr>
+                            <tr><td colspan="<?= $isActiveView ? 7 : 9 ?>" style="text-align:center;color:#94a3b8;"><?= $isActiveView ? '접속 중인 사용자가 없습니다.' : "{$year}년 {$month}월 접속 기록이 없습니다." ?></td></tr>
 <?php else: ?>
 <?php foreach ($sessions as $s): ?>
 <?php $isLoggedOut = $s['logout_at'] !== null; ?>
@@ -126,7 +145,7 @@ $isActiveView = $view !== 'all';
 <?php if ($isActiveView): ?>
                 <p class="count" style="margin-top:16px;">※ 30분 이상 활동이 없거나 로그아웃한 사용자는 자동으로 목록에서 제외됩니다.</p>
 <?php else: ?>
-                <p class="count" style="margin-top:16px;">※ 최근 90일간의 모든 로그인/로그아웃 기록을 표시합니다.</p>
+                <p class="count" style="margin-top:16px;">※ <strong><?= $year ?>년 <?= $month ?>월</strong>의 모든 로그인/로그아웃 기록을 표시합니다. 연도/월을 선택하여 다른 기간을 조회할 수 있습니다.</p>
 <?php endif; ?>
             </div>
         </div>
