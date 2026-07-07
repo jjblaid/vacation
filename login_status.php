@@ -108,7 +108,6 @@ function selected($a, $b) { return $a == $b ? 'selected' : ''; }
                                 <th>이름</th>
                                 <th>아이디</th>
                                 <th>권한</th>
-                                <th>부서</th>
                                 <th>IP 주소</th>
                                 <th>로그인 시간</th>
                                 <th>마지막 활동</th>
@@ -120,7 +119,7 @@ function selected($a, $b) { return $a == $b ? 'selected' : ''; }
                         </thead>
                         <tbody>
 <?php if (count($sessions) === 0): ?>
-                            <tr><td colspan="<?= $isActiveView ? 7 : 9 ?>" style="text-align:center;color:#94a3b8;"><?= $isActiveView ? '접속 중인 사용자가 없습니다.' : "{$year}년 {$month}월 접속 기록이 없습니다." ?></td></tr>
+                            <tr><td colspan="<?= $isActiveView ? 6 : 8 ?>" style="text-align:center;color:#94a3b8;"><?= $isActiveView ? '접속 중인 사용자가 없습니다.' : "{$year}년 {$month}월 접속 기록이 없습니다." ?></td></tr>
 <?php else: ?>
 <?php foreach ($sessions as $s): ?>
 <?php $isLoggedOut = $s['logout_at'] !== null; ?>
@@ -128,7 +127,6 @@ function selected($a, $b) { return $a == $b ? 'selected' : ''; }
                                 <td><strong><?= htmlspecialchars($s['name']) ?></strong></td>
                                 <td><?= htmlspecialchars($s['emp_no']) ?></td>
                                 <td><span class="status-badge <?= $isLoggedOut ? 'status-cancelled' : 'status-active' ?>"><?= htmlspecialchars($roleNames[$s['role']] ?? $s['role']) ?></span></td>
-                                <td><?= htmlspecialchars($s['department_name'] ?? '-') ?></td>
                                 <td class="ip"><?= htmlspecialchars($s['ip_address'] ?? '-') ?></td>
                                 <td class="time"><?= htmlspecialchars($s['login_at']) ?></td>
                                 <td class="time"><?= htmlspecialchars($s['last_activity']) ?></td>
