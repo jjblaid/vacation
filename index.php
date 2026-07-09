@@ -10,12 +10,12 @@ require_once __DIR__ . '/config/security.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ADF 휴가신청 시스템</title>
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
-	<link href="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@5.11.3/main.css" rel="stylesheet">
-	<link href="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@5.11.3/main.css" rel="stylesheet">
-	<link href="https://cdn.jsdelivr.net/npm/@fullcalendar/list@5.11.3/main.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" integrity="sha512-NHredShh2K4bAM40hiHIGPEzhWGD9mcUwbAt3Q/thHmiqJIe0eTVdaTb4Uaj5dbrITJrbRcnQitc5fZCvr5Z8Q==" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@5.11.3/main.css" integrity="sha512-rgfj1WV7y50DvxkdcIZPOLcoyREL8P3CAbV6JGxJsyDmPbfzMRPfRSfaPWun1WNL2fkPrKnT7H7qXF6UM/YKDg==" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@5.11.3/main.css" integrity="sha512-Gt5XUNqI9B+QsiFDBaDZoq72tDNK2kRoSO/4yNBx2ConympFwhkyY6BFE0A8nDTrVQtKUnYUQFbNfzzWjlhiRg==" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/list@5.11.3/main.css" integrity="sha512-msmq2tDcCDOACHca2zLo+dYqr5LpR0HuJaZ0k3c2SZXKx1UV2/zisALRYnTgKwTmQ4tWXiWWOELirHhE2dO69w==" crossorigin="anonymous">
 	<link href="css/styles.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" integrity="sha512-8o9GL4vAqkQv5ASESaPGM9ynmyrOu6tsrukDDRwRnsbC0d2xlN35dCr6S9W37/4HbKhIEVCvfCtBZSrl4hA6bQ==" crossorigin="anonymous">
 </head>
 <body>
     <!-- Login Page -->
@@ -469,8 +469,8 @@ require_once __DIR__ . '/config/security.php';
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/ko.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js" integrity="sha512-pQxj7UAETUWMJS1KY6W3g+o/hW3m0P+1vxit2SRrjS2GGTMBToNixA7OcQy/t66E17zMdc0XHMCMLpZXLEqDcQ==" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/ko.js" integrity="sha512-GiLCg9iA+FxGj0IFRlx3UCBeZyf54vTBuJaqHJXnEsLHB1c28udB6DdDH4Tu6ApHoB+dDXyhEvw8Qx2ri76gtw==" crossorigin="anonymous"></script>
     <script src="js/api.js"></script>
     <script src="js/calendar.js"></script>
     <script src="js/main.js"></script>
