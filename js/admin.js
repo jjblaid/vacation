@@ -7,6 +7,31 @@ let allRequests = [];
 let positions = [];
 let annualLeaveData = [];
 
+document.addEventListener('click', function(e) {
+    const el = e.target.closest('[data-action]');
+    if (!el) return;
+    const a = el.dataset;
+    switch (a.action) {
+        case 'showHolidayModal': showHolidayModal(a.id, a.date, a.name); break;
+        case 'deleteHoliday': deleteHoliday(a.id); break;
+        case 'showResignedHistory': showResignedHistory(a.id, a.name); break;
+        case 'showResigningHistory': showResigningHistory(a.id, a.name); break;
+        case 'editEmployee': editEmployee(a.id); break;
+        case 'deleteEmployee': deleteEmployee(a.id); break;
+        case 'moveType': moveType(a.id, a.dir); break;
+        case 'editType': editType(a.id); break;
+        case 'deleteType': deleteType(a.id); break;
+        case 'editPosition': editPosition(a.id); break;
+        case 'deletePosition': deletePosition(a.id); break;
+        case 'editDepartment': editDepartment(a.id); break;
+        case 'deleteDepartment': deleteDepartment(a.id); break;
+        case 'printRequest': window.open('print.php?id=' + a.id, '_blank'); break;
+        case 'editAnnualLeave': editAnnualLeave(a.id); break;
+        case 'openCertCompleteModal': openCertCompleteModal(a.id); break;
+        case 'openSupportCompleteModal': openSupportCompleteModal(a.id); break;
+    }
+});
+
         document.addEventListener('DOMContentLoaded', async () => {
             const res = await api.auth.check();
             if (res.csrf_token) api.setCsrfToken(res.csrf_token);
@@ -164,8 +189,8 @@ if (tab === 'resigning') {
                     <td>${h.date}</td>
                     <td>${h.name}</td>
                     <td>
-                        <button class="btn btn-sm btn-secondary" onclick="showHolidayModal(${h.id}, '${escapeHtml(h.date)}', '${escapeHtml(h.name)}')">수정</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteHoliday(${h.id})">삭제</button>
+                        <button class="btn btn-sm btn-secondary" data-action="showHolidayModal" data-id="${h.id}" data-date="${escapeHtml(h.date)}" data-name="${escapeHtml(h.name)}">수정</button>
+                        <button class="btn btn-sm btn-danger" data-action="deleteHoliday" data-id="${h.id}">삭제</button>
                     </td>
                 </tr>
             `).join('');
@@ -295,15 +320,15 @@ async function loadResigningEmployees() {
 
         function renderResignedEmployees() {
             document.getElementById('resignedList').innerHTML = resignedEmployees.map(e => `
-                <tr onclick="showResignedHistory(${e.id}, '${escapeHtml(e.name)}')" style="cursor:pointer;">
+                <tr data-action="showResignedHistory" data-id="${e.id}" data-name="${escapeHtml(e.name)}" style="cursor:pointer;">
                     <td>${e.emp_no}</td>
-                    <td>${e.name}</td>
-                    <td>${e.department_name || '-'}</td>
-                    <td>${e.position_name || '-'}</td>
-                    <td>${e.hire_date || '-'}</td>
-                    <td>${e.resignation_date || '-'}</td>
+                    <td>${escapeHtml(e.name)}</td>
+                    <td>${escapeHtml(e.department_name)}</td>
+                    <td>${escapeHtml(e.position_name)}</td>
+                    <td>${e.hire_date}</td>
+                    <td>${e.resign_date}</td>
                     <td>
-                        <button class="btn btn-sm btn-secondary" onclick="event.stopPropagation(); editEmployee(${e.id})">수정</button>
+                        <button class="btn btn-sm btn-secondary" data-action="editEmployee" data-id="${e.id}">수정</button>
                     </td>
                 </tr>
             `).join('');
@@ -314,19 +339,19 @@ async function loadResigningEmployees() {
                  // Get severance usage for this employee
                  const usage = resigningSeveranceUsageCache[e.id] || { used: 0, remaining: 0 };
                  return `
-                 <tr onclick="showResigningHistory(${e.id}, '${escapeHtml(e.name)}')" style="cursor:pointer;">
-                     <td>${e.emp_no}</td>
-                     <td>${e.name}</td>
-                     <td>${e.department_name || '-'}</td>
-                     <td>${e.position_name || '-'}</td>
-                     <td>${e.hire_date || '-'}</td>
-                     <td>${usage.remaining.toFixed(1)}</td>
-                     <td>${(parseFloat(e.annual_leave) || 0).toFixed(1)}</td>
-                     <td>${(usage.remaining + (parseFloat(e.annual_leave) || 0)).toFixed(1)}</td>
-                     <td>
-                         <button class="btn btn-sm btn-secondary" onclick="event.stopPropagation(); editEmployee(${e.id})">수정</button>
-                     </td>
-                 </tr>
+                  <tr data-action="showResigningHistory" data-id="${e.id}" data-name="${escapeHtml(e.name)}" style="cursor:pointer;">
+                      <td>${e.emp_no}</td>
+                      <td>${e.name}</td>
+                      <td>${e.department_name || '-'}</td>
+                      <td>${e.position_name || '-'}</td>
+                      <td>${e.hire_date || '-'}</td>
+                      <td>${usage.remaining.toFixed(1)}</td>
+                      <td>${(parseFloat(e.annual_leave) || 0).toFixed(1)}</td>
+                      <td>${(usage.remaining + (parseFloat(e.annual_leave) || 0)).toFixed(1)}</td>
+                      <td>
+                          <button class="btn btn-sm btn-secondary" data-action="editEmployee" data-id="${e.id}">수정</button>
+                      </td>
+                  </tr>
                  `;
              }).join('');
          }
@@ -392,8 +417,8 @@ async function loadResigningEmployees() {
                     <td>${(employeesLeaveData[e.id]?.remaining || parseFloat(e.annual_leave) || 0).toFixed(1)}</td>
                     <td><span class="status-badge status-${e.is_active == 1 ? 'active' : 'inactive'}">${e.is_active == 1 ? '재직' : '퇴사'}</span></td>
                     <td>
-                        <button class="btn btn-sm btn-secondary" onclick="editEmployee(${e.id})">수정</button>
-                        ${e.id != currentUserId ? `<button class="btn btn-sm btn-danger" onclick="deleteEmployee(${e.id})">삭제</button>` : ''}
+                        <button class="btn btn-sm btn-secondary" data-action="editEmployee" data-id="${e.id}">수정</button>
+                        ${e.id != currentUserId ? `<button class="btn btn-sm btn-danger" data-action="deleteEmployee" data-id="${e.id}">삭제</button>` : ''}
                     </td>
                 </tr>
             `).join('');
@@ -615,10 +640,10 @@ const data = {
                     <td>${t.count_all_days == 1 ? '포함' : '제외'}</td>
                     <td><input type="color" value="${t.color}" disabled></td>
                     <td style="white-space:nowrap">
-                        <button class="btn btn-sm btn-secondary" onclick="moveType(${t.id}, -1)" ${i === 0 ? 'disabled' : ''}>▲</button>
-                        <button class="btn btn-sm btn-secondary" onclick="moveType(${t.id}, 1)" ${i === len - 1 ? 'disabled' : ''}>▼</button>
-                        <button class="btn btn-sm btn-secondary" onclick="editType(${t.id})">수정</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteType(${t.id})">삭제</button>
+                        <button class="btn btn-sm btn-secondary" data-action="moveType" data-id="${t.id}" data-dir="-1" ${i === 0 ? 'disabled' : ''}>▲</button>
+                        <button class="btn btn-sm btn-secondary" data-action="moveType" data-id="${t.id}" data-dir="1" ${i === len - 1 ? 'disabled' : ''}>▼</button>
+                        <button class="btn btn-sm btn-secondary" data-action="editType" data-id="${t.id}">수정</button>
+                        <button class="btn btn-sm btn-danger" data-action="deleteType" data-id="${t.id}">삭제</button>
                     </td>
                 </tr>
             `).join('');
@@ -734,8 +759,8 @@ const data = {
                 <tr>
                     <td>${p.name}</td>
                     <td>
-                        <button class="btn btn-sm btn-secondary" onclick="editPosition(${p.id})">수정</button>
-                        <button class="btn btn-sm btn-danger" onclick="deletePosition(${p.id})">삭제</button>
+                        <button class="btn btn-sm btn-secondary" data-action="editPosition" data-id="${p.id}">수정</button>
+                        <button class="btn btn-sm btn-danger" data-action="deletePosition" data-id="${p.id}">삭제</button>
                     </td>
                 </tr>
             `).join('');
@@ -815,8 +840,8 @@ const data = {
                     <td>${d.name}</td>
                     <td><span class="color-dot" style="background:${d.color}"></span>${d.color}</td>
                     <td>
-                        <button class="btn btn-sm btn-secondary" onclick="editDepartment(${d.id})">수정</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteDepartment(${d.id})">삭제</button>
+                        <button class="btn btn-sm btn-secondary" data-action="editDepartment" data-id="${d.id}">수정</button>
+                        <button class="btn btn-sm btn-danger" data-action="deleteDepartment" data-id="${d.id}">삭제</button>
                     </td>
                 </tr>
             `).join('');
@@ -877,7 +902,7 @@ const data = {
                     <td>${(r.reason || '').substring(0, 20)}${r.reason && r.reason.length > 20 ? '...' : ''}</td>
                     <td><span class="status-badge status-${r.status}">${statusNames[r.status]}</span></td>
                     <td>
-                        <button class="btn btn-sm btn-primary" onclick="window.open('print.php?id=${r.id}', '_blank')">출력</button>
+                        <button class="btn btn-sm btn-primary" data-action="printRequest" data-id="${r.id}">출력</button>
                     </td>
                 </tr>
             `).join('');
@@ -949,7 +974,7 @@ const data = {
                     <td style="text-align:center;">${emp.used.toFixed(1)}</td>
                     <td style="text-align:center;${remainingClass}">${remaining.toFixed(1)}</td>
                     <td>
-                        <button class="btn btn-sm btn-secondary" onclick="editAnnualLeave(${emp.id})">수정</button>
+                        <button class="btn btn-sm btn-secondary" data-action="editAnnualLeave" data-id="${emp.id}">수정</button>
                     </td>
                 </tr>`;
             }).join('');
@@ -1042,7 +1067,7 @@ const data = {
                     <td>${r.notes || '-'}</td>
                     <td>
                         ${r.status === 'requested'
-                            ? `<button class="btn btn-sm btn-primary" onclick="openCertCompleteModal(${r.id})">완료</button>`
+                            ? `<button class="btn btn-sm btn-primary" data-action="openCertCompleteModal" data-id="${r.id}">완료</button>`
                             : ''}
                     </td>
                 </tr>
@@ -1098,7 +1123,7 @@ const data = {
                     <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeHtml(r.notes || '')}">${r.notes || '-'}</td>
                     <td>
                         ${r.status === 'requested'
-                            ? `<button class="btn btn-sm btn-primary" onclick="openSupportCompleteModal(${r.id})">완료</button>`
+                            ? `<button class="btn btn-sm btn-primary" data-action="openSupportCompleteModal" data-id="${r.id}">완료</button>`
                             : ''}
                     </td>
                 </tr>

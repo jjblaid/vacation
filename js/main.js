@@ -2,6 +2,23 @@ let currentUser = null;
 let vacationTypes = [];
 let condolenceTypes = [];
 let holidays = [];
+const _pageParams = {};
+
+document.addEventListener('click', function(e) {
+    const el = e.target.closest('[data-action]');
+    if (!el) return;
+    const a = el.dataset;
+    switch (a.action) {
+        case 'editVacation': editVacation(a.id); break;
+        case 'approveRequest': approveRequest(a.id); break;
+        case 'cancelRequest': cancelRequest(a.id); break;
+        case 'printRequest': printRequest(a.id); break;
+        case 'loadVacationList':
+            const pp = _pageParams[a.uid];
+            if (pp) loadVacationList(pp.year, pp.month, a.page, pp.empId, pp.deptId, pp.showCancelled);
+            break;
+    }
+});
 
 document.addEventListener('DOMContentLoaded', async () => {
     await checkAuth();
@@ -422,13 +439,11 @@ function renderPagination(total, page, limit, year, month, empId, deptId, showCa
     
     if (totalPages <= 1) return;
     
-    const empParam = empId ? `'${empId}'` : 'null';
-    const deptParam = deptId ? `'${deptId}'` : 'null';
-    const monthParam = (month !== undefined && month !== null) ? `${month}` : 'null';
-    const cancelledParam = showCancelled ? 'true' : 'false';
+    const uid = 'p' + Date.now();
+    _pageParams[uid] = { year, month: month ?? null, empId: empId ?? null, deptId: deptId ?? null, showCancelled };
     let html = '<div style="display:flex; justify-content:center; gap:8px; margin-top:16px;">';
     for (let i = 1; i <= totalPages; i++) {
-        html += `<button class="btn btn-sm ${i === page ? 'btn-primary' : 'btn-secondary'}" onclick="loadVacationList(${year}, ${monthParam}, ${i}, ${empParam}, ${deptParam}, ${cancelledParam})">${i}</button>`;
+        html += `<button class="btn btn-sm ${i === page ? 'btn-primary' : 'btn-secondary'}" data-action="loadVacationList" data-uid="${uid}" data-page="${i}">${i}</button>`;
     }
     html += '</div>';
     
@@ -480,18 +495,18 @@ function renderVacationTable(data) {
         row += `<td class="actions">`;
         
         if (r.status === 'applied' && (isOwnRequest || isDeptMember)) {
-            row += `<button class="btn btn-sm btn-secondary" onclick="editVacation(${r.id})">수정</button> `;
+            row += `<button class="btn btn-sm btn-secondary" data-action="editVacation" data-id="${r.id}">수정</button> `;
         }
         
         if (r.status === 'applied' && canApprove) {
-            row += `<button class="btn btn-sm btn-success" onclick="approveRequest(${r.id})">완료</button> `;
+            row += `<button class="btn btn-sm btn-success" data-action="approveRequest" data-id="${r.id}">완료</button> `;
         }
         
         if (r.status !== 'cancelled' && canApprove) {
-            row += `<button class="btn btn-sm btn-secondary" onclick="cancelRequest(${r.id})">취소</button> `;
+            row += `<button class="btn btn-sm btn-secondary" data-action="cancelRequest" data-id="${r.id}">취소</button> `;
         }
         
-        row += `<button class="btn btn-sm btn-primary" onclick="printRequest(${r.id})">출력</button>`;
+        row += `<button class="btn btn-sm btn-primary" data-action="printRequest" data-id="${r.id}">출력</button>`;
         row += `</td></tr>`;
         
         return row;
