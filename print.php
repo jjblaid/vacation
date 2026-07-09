@@ -164,7 +164,7 @@ function halfLabel($halfDb, $vacationType) {
         ✕ 닫기
     </button>
 </div>
-<script>
+<script nonce="<?= $cspNonce ?>">
 document.getElementById('btnPrint').addEventListener('click', () => window.print());
 document.getElementById('btnClose').addEventListener('click', () => window.close());
 </script>

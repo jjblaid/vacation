@@ -249,7 +249,7 @@ $today = date('Y년  m월  d일');
 
 </div>
 
-<script>
+<script nonce="<?= $cspNonce ?>">
 document.getElementById('btnPrintResign').addEventListener('click', function() {
     var reason = document.getElementById('reasonInput').value;
     document.getElementById('printReason').textContent = reason;

@@ -474,7 +474,7 @@ require_once __DIR__ . '/config/security.php';
     <script src="js/api.js"></script>
     <script src="js/calendar.js"></script>
     <script src="js/main.js"></script>
-    <script>
+    <script nonce="<?= $cspNonce ?>">
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const empNo = document.getElementById('loginEmpNo').value;

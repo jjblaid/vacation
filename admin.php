@@ -52,8 +52,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet" integrity="sha384-39yVKLsD9lMelmY+ij49KZgE+Mfk6hjdUPNE8yKHqdMPceLXzhlCJAK81xlD5jDjday" crossorigin="anonymous">
     <link href="css/styles.css" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" integrity="sha512-8o9GL4vAqkQv5ASESaPGM9ynmyrOu6tsrukDDRwRnsbC0d2xlN35dCr6S9W37/4HbKhIEVCvfCtBZSrl4hA6bQ==" crossorigin="anonymous">
-    <script>
-        // Role names (must match PHP $roleNames array)
+    <script nonce="<?= $cspNonce ?>">
         const roleNames = {"system_admin":"시스템관리자","reviewer":"검토자","dept_manager":"관리자","ceo":"대표이사","vice_president":"부대표","user":"사용자"};
     </script>
 </head>
@@ -816,7 +815,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
 
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js" integrity="sha384-5/vsv56401Wf+RP3yE5/aIKW4wutk4nLY3HjueTXN0rA+DmweMtrYaN6RSjdv31bk" crossorigin="anonymous"></script>
     <script src="js/api.js"></script>
-    <script>const currentUserId = <?= $currentUser['id'] ?>;</script>
+    <script nonce="<?= $cspNonce ?>">const currentUserId = <?= $currentUser['id'] ?>;</script>
     <script src="js/admin.js"></script>
 </body>
 </html>

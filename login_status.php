@@ -148,7 +148,7 @@ function selected($a, $b) { return $a == $b ? 'selected' : ''; }
             </div>
         </div>
     </div>
-<script>
+<script nonce="<?= $cspNonce ?>">
 document.getElementById('btnRefresh').addEventListener('click', () => location.reload());
 document.getElementById('filterYear').addEventListener('change', function() { this.form.submit(); });
 document.getElementById('filterMonth').addEventListener('change', function() { this.form.submit(); });
