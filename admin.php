@@ -69,7 +69,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
                     <div class="user-role"><?php echo htmlspecialchars($currentUserRoleName); ?></div>
                 </div>
                 <a href="index.php" class="btn btn-sm btn-secondary">← 휴가신청</a>
-                <button class="btn btn-sm btn-secondary" onclick="logout()">로그아웃</button>
+                <button id="adminLogout" class="btn btn-sm btn-secondary">로그아웃</button>
             </div>
         </div>
     </header>
@@ -77,23 +77,23 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
     <main class="container">
 <div class="tabs">
     <div class="tabs-scroll">
-        <button class="tab active" onclick="showTab('employees')">👥 사원 관리</button>
-        <button class="tab" onclick="showTab('resigned')">👤 퇴사자</button>
-        <button class="tab" onclick="showTab('resigning')">⚠️ 퇴사예정자</button>
-        <button class="tab" onclick="showTab('annualLeave')">📅 연도별 연차</button>
-        <button class="tab" onclick="showTab('certificate')">📜 증명서 요청</button>
-        <button class="tab" onclick="showTab('support')">📋 지원 요청</button>
+        <button class="tab active" data-tab="employees" id="tabEmployeesBtn">👥 사원 관리</button>
+        <button class="tab" data-tab="resigned" id="tabResignedBtn">👤 퇴사자</button>
+        <button class="tab" data-tab="resigning" id="tabResigningBtn">⚠️ 퇴사예정자</button>
+        <button class="tab" data-tab="annualLeave" id="tabAnnualLeaveBtn">📅 연도별 연차</button>
+        <button class="tab" data-tab="certificate" id="tabCertificateBtn">📜 증명서 요청</button>
+        <button class="tab" data-tab="support" id="tabSupportBtn">📋 지원 요청</button>
         <div class="tab-dropdown">
-            <button class="tab" onclick="toggleSettingsDropdown(event)">⚙️ 환경설정 ▾</button>
+            <button class="tab" id="tabSettingsDropdown">⚙️ 환경설정 ▾</button>
             <div class="tab-dropdown-menu">
-                <button class="tab-dropdown-item" onclick="showTab('vacationTypes')">📋 휴가 유형</button>
-                <button class="tab-dropdown-item" onclick="showTab('positions')">👔 직급 관리</button>
-                <button class="tab-dropdown-item" onclick="showTab('departments')">🏢 부서 관리</button>
-                <button class="tab-dropdown-item" onclick="showTab('holidays')">🏖️ 공휴일</button>
-                <button class="tab-dropdown-item" onclick="showTab('settings')">⚙️ SMTP 설정</button>
+                <button class="tab-dropdown-item" data-tab="vacationTypes" id="tabVacationTypesItem">📋 휴가 유형</button>
+                <button class="tab-dropdown-item" data-tab="positions" id="tabPositionsItem">👔 직급 관리</button>
+                <button class="tab-dropdown-item" data-tab="departments" id="tabDepartmentsItem">🏢 부서 관리</button>
+                <button class="tab-dropdown-item" data-tab="holidays" id="tabHolidaysItem">🏖️ 공휴일</button>
+                <button class="tab-dropdown-item" data-tab="settings" id="tabSettingsItem">⚙️ SMTP 설정</button>
             </div>
         </div>
-        <button class="tab" onclick="showTab('allRequests')">📊 전체 휴가 현황</button>
+        <button class="tab" data-tab="allRequests" id="tabAllRequestsBtn">📊 전체 휴가 현황</button>
     </div>
 </div>
 
@@ -102,7 +102,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
             <div class="section">
                 <div class="section-header">
                     <h2 class="section-title">사원 목록</h2>
-                    <button class="btn btn-primary" onclick="showEmployeeModal()">+ 사원 추가</button>
+                    <button id="btnAddEmployee" class="btn btn-primary">+ 사원 추가</button>
                 </div>
                 <div class="section-body">
                     <div class="table-wrapper">
@@ -224,7 +224,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
             <div class="section">
                 <div class="section-header">
                     <h2 class="section-title">휴가 유형 관리</h2>
-                    <button class="btn btn-primary" onclick="showTypeModal()">+ 유형 추가</button>
+                    <button id="btnAddType" class="btn btn-primary">+ 유형 추가</button>
                 </div>
                 <div class="section-body">
                     <div class="table-wrapper">
@@ -253,7 +253,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
             <div class="section">
                 <div class="section-header">
                     <h2 class="section-title">직급 관리</h2>
-                    <button class="btn btn-primary" onclick="showPositionModal()">+ 직급 추가</button>
+                    <button id="btnAddPosition" class="btn btn-primary">+ 직급 추가</button>
                 </div>
                 <div class="section-body">
                     <div class="table-wrapper">
@@ -276,7 +276,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
             <div class="section">
                 <div class="section-header">
                     <h2 class="section-title">부서 관리</h2>
-                    <button class="btn btn-primary" onclick="showDepartmentModal()">+ 부서 추가</button>
+                    <button id="btnAddDepartment" class="btn btn-primary">+ 부서 추가</button>
                 </div>
                 <div class="section-body">
                     <div class="table-wrapper">
@@ -301,7 +301,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
             <div class="modal">
                 <div class="modal-header">
                     <h3 class="modal-title" id="departmentModalTitle">부서 추가</h3>
-                    <button class="modal-close" onclick="closeDepartmentModal()">&times;</button>
+                    <button class="modal-close" id="btnCloseDept">&times;</button>
                 </div>
                 <form id="departmentForm" onsubmit="saveDepartment(event)">
                     <input type="hidden" id="deptId">
@@ -320,7 +320,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" onclick="closeDepartmentModal()">취소</button>
+                        <button type="button" class="btn btn-secondary" id="btnCancelDept">취소</button>
                         <button type="submit" class="btn btn-primary">저장</button>
                     </div>
                 </form>
@@ -332,7 +332,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
             <div class="modal">
                 <div class="modal-header">
                     <h3 class="modal-title" id="positionModalTitle">직급 추가</h3>
-                    <button class="modal-close" onclick="closePositionModal()">&times;</button>
+                    <button class="modal-close" id="btnClosePosition">&times;</button>
                 </div>
                 <form id="positionForm" onsubmit="savePosition(event)">
                     <input type="hidden" id="positionId">
@@ -343,7 +343,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" onclick="closePositionModal()">취소</button>
+                        <button type="button" class="btn btn-secondary" id="btnCancelPosition">취소</button>
                         <button type="submit" class="btn btn-primary">저장하기</button>
                     </div>
                 </form>
@@ -356,8 +356,8 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
                 <div class="section-header">
                     <h2 class="section-title">공휴일 관리</h2>
                     <div style="display: flex; gap: 10px; align-items: center;">
-                        <select id="holidayYear" onchange="loadHolidays()"></select>
-                        <button class="btn btn-primary" onclick="showHolidayModal()">+ 공휴일 추가</button>
+                        <select id="holidayYear"></select>
+                        <button class="btn btn-primary" id="btnAddHoliday">+ 공휴일 추가</button>
                     </div>
                 </div>
                 <div class="section-body">
@@ -382,7 +382,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
             <div class="modal">
                 <div class="modal-header">
                     <h3 class="modal-title" id="holidayModalTitle">공휴일 추가</h3>
-                    <button class="modal-close" onclick="closeHolidayModal()">&times;</button>
+                    <button class="modal-close" id="btnCloseHoliday">&times;</button>
                 </div>
                 <form id="holidayForm" onsubmit="saveHoliday(event)">
                     <input type="hidden" id="holidayId">
@@ -397,7 +397,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" onclick="closeHolidayModal()">취소</button>
+                        <button type="button" class="btn btn-secondary" id="btnCancelHoliday">취소</button>
                         <button type="submit" class="btn btn-primary">저장하기</button>
                     </div>
                 </form>
@@ -409,7 +409,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
             <div class="modal">
                 <div class="modal-header">
                     <h3 class="modal-title">연차 부여 수정</h3>
-                    <button class="modal-close" onclick="closeAnnualLeaveEditModal()">&times;</button>
+                    <button class="modal-close" id="btnCloseAnnualLeaveEdit">&times;</button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" id="aleEmployeeId">
@@ -421,8 +421,8 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeAnnualLeaveEditModal()">취소</button>
-                    <button type="button" class="btn btn-primary" onclick="saveAnnualLeaveEdit()">저장</button>
+                    <button type="button" class="btn btn-secondary" id="btnCancelAnnualLeaveEdit">취소</button>
+                    <button type="button" class="btn btn-primary" id="btnSaveAnnualLeaveEdit">저장</button>
                 </div>
             </div>
         </div>
@@ -433,7 +433,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
                 <div class="section-header">
                     <h2 class="section-title">📅 연도별 연차 관리</h2>
                     <div style="display:flex;gap:10px;align-items:center;">
-                        <select id="annualYearSelect" onchange="loadAnnualLeaveTable()" style="padding:8px 12px;border-radius:8px;border:1px solid #e2e8f0;">
+                        <select id="annualYearSelect" style="padding:8px 12px;border-radius:8px;border:1px solid #e2e8f0;">
                         </select>
                     </div>
                 </div>
@@ -554,7 +554,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
     <div class="modal" style="max-width:450px;">
         <div class="modal-header">
             <h3 class="modal-title" id="supportCompleteTitle">행정지원 요청 처리</h3>
-            <button class="modal-close" onclick="closeSupportCompleteModal()">&times;</button>
+            <button class="modal-close" id="btnCloseSupportComplete">&times;</button>
         </div>
         <div class="modal-body">
             <input type="hidden" id="supportCompleteId">
@@ -565,8 +565,8 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" onclick="closeSupportCompleteModal()">취소</button>
-            <button type="button" class="btn btn-primary" onclick="saveSupportComplete()">저장</button>
+            <button type="button" class="btn btn-secondary" id="btnCancelSupportComplete">취소</button>
+            <button type="button" class="btn btn-primary" id="btnSaveSupportComplete">저장</button>
         </div>
     </div>
 </div>
@@ -576,7 +576,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
     <div class="modal" style="max-width:450px;">
         <div class="modal-header">
             <h3 class="modal-title">증명서 발급 완료</h3>
-            <button class="modal-close" onclick="closeCertCompleteModal()">&times;</button>
+            <button class="modal-close" id="btnCloseCertComplete">&times;</button>
         </div>
         <div class="modal-body">
             <input type="hidden" id="certCompleteId">
@@ -586,8 +586,8 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" onclick="closeCertCompleteModal()">취소</button>
-            <button type="button" class="btn btn-primary" onclick="saveCertComplete()">완료</button>
+            <button type="button" class="btn btn-secondary" id="btnCancelCertComplete">취소</button>
+            <button type="button" class="btn btn-primary" id="btnSaveCertComplete">완료</button>
         </div>
     </div>
 </div>
@@ -631,8 +631,8 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
                 <label class="checkbox-label"> SMTP 인증 사용 <input type="checkbox" id="smtpAuth" value="1"> </label>
             </div>
             <div style="display:flex; gap:10px; margin-top:20px;">
-                <button class="btn btn-primary" onclick="saveSmtpSettings()">저장</button>
-                <button class="btn btn-secondary" onclick="testSmtpSettings()">테스트 발송</button>
+                <button class="btn btn-primary" id="btnSaveSmtp">저장</button>
+                <button class="btn btn-secondary" id="btnTestSmtp">테스트 발송</button>
             </div>
             <div id="smtpResult" style="margin-top:10px; font-weight:600;"></div>
         </div>
@@ -645,19 +645,19 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
         <div class="modal" style="max-width:380px;">
             <div class="modal-header">
                 <h3 class="modal-title">비밀번호 확인</h3>
-                <button class="modal-close" onclick="closePasswordVerifyModal()">&times;</button>
+                <button class="modal-close" id="btnClosePwVerify">&times;</button>
             </div>
             <div class="modal-body">
                 <p style="margin-bottom:12px; font-size:14px; color:#555;">주민등록번호를 보려면 비밀번호를 입력하세요.</p>
                 <div style="display:flex; gap:6px; align-items:center;">
                     <input type="password" id="pwVerifyInput" maxlength="100" placeholder="비밀번호 입력" style="flex:1; padding:10px; border:1px solid #ddd; border-radius:6px; font-size:14px;" onkeydown="if(event.key==='Enter') confirmPasswordVerify()">
-                    <span id="pwVerifyToggle" onclick="togglePwVerifyVisible()" style="cursor:pointer; font-size:20px; user-select:none;">👁️</span>
+                    <span id="pwVerifyToggle" style="cursor:pointer; font-size:20px; user-select:none;">👁️</span>
                 </div>
                 <div id="pwVerifyError" style="color:#dc2626; font-size:13px; margin-top:8px; display:none;"></div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closePasswordVerifyModal()">취소</button>
-                <button type="button" class="btn btn-primary" onclick="confirmPasswordVerify()">확인</button>
+                <button type="button" class="btn btn-secondary" id="btnCancelPwVerify">취소</button>
+                <button type="button" class="btn btn-primary" id="btnConfirmPwVerify">확인</button>
             </div>
         </div>
     </div>
@@ -667,7 +667,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
         <div class="modal">
             <div class="modal-header">
                 <h3 class="modal-title" id="employeeModalTitle">사원 추가</h3>
-                <button class="modal-close" onclick="closeEmployeeModal()">&times;</button>
+                <button class="modal-close" id="btnCloseEmployee">&times;</button>
             </div>
             <form id="employeeForm">
                 <div class="modal-body">
@@ -737,7 +737,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
                         <input type="date" id="empHireDate">
                     </div>
                     <div class="form-group">
-                        <label class="checkbox-label"><input type="checkbox" id="empIsActive" onchange="document.getElementById('empResignDate').style.display=this.checked?'block':'none'"> 퇴직처리</label>
+                        <label class="checkbox-label"><input type="checkbox" id="empIsActive"> 퇴직처리</label>
                     </div>
 <div class="form-group" id="empResignDate" style="display:none;">
     <label>퇴직일</label>
@@ -759,8 +759,8 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
 </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeEmployeeModal()">취소</button>
-                    <button type="button" class="btn btn-primary" onclick="saveEmployee()">저장</button>
+                    <button type="button" class="btn btn-secondary" id="btnCancelEmployee">취소</button>
+                    <button type="button" class="btn btn-primary" id="btnSaveEmployee">저장</button>
                 </div>
             </form>
         </div>
@@ -771,7 +771,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
         <div class="modal">
             <div class="modal-header">
                 <h3 class="modal-title" id="typeModalTitle">휴가 유형 추가</h3>
-                <button class="modal-close" onclick="closeTypeModal()">&times;</button>
+                <button class="modal-close" id="btnCloseType">&times;</button>
             </div>
             <form id="typeForm" onsubmit="saveType(event)">
                 <div class="modal-body">
@@ -807,7 +807,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeTypeModal()">취소</button>
+                    <button type="button" class="btn btn-secondary" id="btnCancelType">취소</button>
                     <button type="submit" class="btn btn-primary">저장</button>
                 </div>
             </form>

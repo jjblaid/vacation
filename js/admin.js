@@ -15,15 +15,72 @@ let annualLeaveData = [];
             loadEmployeesWithLeave();
             loadVacationTypes();
             loadAllRequests();
+            initAdminEventListeners();
         });
-        
+
+function initAdminEventListeners() {
+    const $ = id => document.getElementById(id);
+    $('adminLogout')?.addEventListener('click', logout);
+    // Tab buttons
+    document.querySelectorAll('[data-tab]').forEach(btn => {
+        btn.addEventListener('click', () => showTab(btn.dataset.tab));
+    });
+    $('tabSettingsDropdown')?.addEventListener('click', toggleSettingsDropdown);
+    // Action buttons
+    $('btnAddEmployee')?.addEventListener('click', () => showEmployeeModal());
+    $('btnAddType')?.addEventListener('click', () => showTypeModal());
+    $('btnAddPosition')?.addEventListener('click', () => showPositionModal());
+    $('btnAddDepartment')?.addEventListener('click', () => showDepartmentModal());
+    $('btnAddHoliday')?.addEventListener('click', () => showHolidayModal());
+    // Department modal
+    $('btnCloseDept')?.addEventListener('click', closeDepartmentModal);
+    $('btnCancelDept')?.addEventListener('click', closeDepartmentModal);
+    // Position modal
+    $('btnClosePosition')?.addEventListener('click', closePositionModal);
+    $('btnCancelPosition')?.addEventListener('click', closePositionModal);
+    // Holiday modal
+    $('holidayYear')?.addEventListener('change', loadHolidays);
+    $('btnCloseHoliday')?.addEventListener('click', closeHolidayModal);
+    $('btnCancelHoliday')?.addEventListener('click', closeHolidayModal);
+    // Annual leave edit modal
+    $('btnCloseAnnualLeaveEdit')?.addEventListener('click', closeAnnualLeaveEditModal);
+    $('btnCancelAnnualLeaveEdit')?.addEventListener('click', closeAnnualLeaveEditModal);
+    $('btnSaveAnnualLeaveEdit')?.addEventListener('click', saveAnnualLeaveEdit);
+    $('annualYearSelect')?.addEventListener('change', loadAnnualLeaveTable);
+    // Support complete modal
+    $('btnCloseSupportComplete')?.addEventListener('click', closeSupportCompleteModal);
+    $('btnCancelSupportComplete')?.addEventListener('click', closeSupportCompleteModal);
+    $('btnSaveSupportComplete')?.addEventListener('click', saveSupportComplete);
+    // Cert complete modal
+    $('btnCloseCertComplete')?.addEventListener('click', closeCertCompleteModal);
+    $('btnCancelCertComplete')?.addEventListener('click', closeCertCompleteModal);
+    $('btnSaveCertComplete')?.addEventListener('click', saveCertComplete);
+    // SMTP settings
+    $('btnSaveSmtp')?.addEventListener('click', saveSmtpSettings);
+    $('btnTestSmtp')?.addEventListener('click', testSmtpSettings);
+    // Password verify modal
+    $('btnClosePwVerify')?.addEventListener('click', closePasswordVerifyModal);
+    $('pwVerifyToggle')?.addEventListener('click', togglePwVerifyVisible);
+    $('btnCancelPwVerify')?.addEventListener('click', closePasswordVerifyModal);
+    $('btnConfirmPwVerify')?.addEventListener('click', confirmPasswordVerify);
+    // Employee modal
+    $('btnCloseEmployee')?.addEventListener('click', closeEmployeeModal);
+    $('empIsActive')?.addEventListener('change', function() {
+        document.getElementById('empResignDate').style.display = this.checked ? 'block' : 'none';
+    });
+    $('btnCancelEmployee')?.addEventListener('click', closeEmployeeModal);
+    $('btnSaveEmployee')?.addEventListener('click', saveEmployee);
+    // Type modal
+    $('btnCloseType')?.addEventListener('click', closeTypeModal);
+    $('btnCancelType')?.addEventListener('click', closeTypeModal);
+}
+
         function showTab(tab) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
             document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.remove('hidden');
-            document.querySelectorAll('.tab').forEach(btn => {
-                const onclick = btn.getAttribute('onclick');
-                if (onclick && onclick.includes(`showTab('${tab}')`)) {
+            document.querySelectorAll('[data-tab]').forEach(btn => {
+                if (btn.dataset.tab === tab) {
                     btn.classList.add('active');
                 }
             });
