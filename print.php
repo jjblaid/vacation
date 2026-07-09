@@ -157,13 +157,17 @@ function halfLabel($halfDb, $vacationType) {
 <body>
 
 <div class="no-print" style="text-align:center; padding:12px; background:#fff; border-bottom:1px solid #ddd;">
-    <button onclick="window.print()" style="padding:8px 28px; font-size:14px; background:#222; color:#fff; border:none; cursor:pointer; border-radius:3px; font-family:'Noto Sans KR',sans-serif;">
+    <button id="btnPrint" style="padding:8px 28px; font-size:14px; background:#222; color:#fff; border:none; cursor:pointer; border-radius:3px; font-family:'Noto Sans KR',sans-serif;">
         🖨 인쇄
     </button>
-    <button onclick="window.close()" style="margin-left:10px; padding:8px 20px; font-size:14px; background:#fff; color:#444; border:1px solid #aaa; cursor:pointer; border-radius:3px; font-family:'Noto Sans KR',sans-serif;">
+    <button id="btnClose" style="margin-left:10px; padding:8px 20px; font-size:14px; background:#fff; color:#444; border:1px solid #aaa; cursor:pointer; border-radius:3px; font-family:'Noto Sans KR',sans-serif;">
         ✕ 닫기
     </button>
 </div>
+<script>
+document.getElementById('btnPrint').addEventListener('click', () => window.print());
+document.getElementById('btnClose').addEventListener('click', () => window.close());
+</script>
 
 <div class="page">
 <div> <img src="Logo.jpg" align="Left"> </img></div>

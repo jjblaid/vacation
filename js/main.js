@@ -5,7 +5,61 @@ let holidays = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
     await checkAuth();
+    initEventListeners();
 });
+
+function initEventListeners() {
+    const $ = id => document.getElementById(id);
+    // Header
+    $('btnShowPassword')?.addEventListener('click', showPasswordModal);
+    $('annualLeaveBtn')?.addEventListener('click', toggleAnnualLeaveView);
+    $('btnAddFavorites')?.addEventListener('click', addToFavorites);
+    $('btnLogout')?.addEventListener('click', logout);
+    // Calendar
+    $('btnPrintResign')?.addEventListener('click', printResignation);
+    $('btnSupportMenu')?.addEventListener('click', toggleSupportMenu);
+    $('btnCertCareer')?.addEventListener('click', () => requestCertificate('career'));
+    $('btnCertEmployment')?.addEventListener('click', () => requestCertificate('employment'));
+    $('btnSupportIdCard')?.addEventListener('click', () => openSupportModal('id_card','사원증'));
+    $('btnSupportBizCard')?.addEventListener('click', () => openSupportModal('business_card','명함'));
+    $('btnSupportOffice')?.addEventListener('click', () => openSupportModal('office_supply','사무용품'));
+    $('btnShowVacation')?.addEventListener('click', showVacationModal);
+    // Filters
+    $('showMyOnly')?.addEventListener('change', toggleMyVacationOnly);
+    $('filterDept')?.addEventListener('change', filterByDept);
+    $('filterEmp')?.addEventListener('change', filterByEmp);
+    $('filterYear')?.addEventListener('change', filterByYear);
+    $('filterMonth')?.addEventListener('change', filterByYear);
+    $('showCancelled')?.addEventListener('change', filterByYear);
+    // Annual leave
+    $('annualLeaveYear')?.addEventListener('change', loadEmployeeAnnualList);
+    $('btnBackToVacation')?.addEventListener('click', toggleAnnualLeaveView);
+    // Certificate modal
+    $('btnCloseCert')?.addEventListener('click', closeCertificateModal);
+    $('certJobDesc')?.addEventListener('change', toggleJobDescContent);
+    $('btnSubmitCert')?.addEventListener('click', submitCertificate);
+    $('btnCancelCert')?.addEventListener('click', closeCertificateModal);
+    // Support modal
+    $('btnCloseSupport')?.addEventListener('click', closeSupportModal);
+    $('btnCancelSupport')?.addEventListener('click', closeSupportModal);
+    $('btnSubmitSupport')?.addEventListener('click', submitSupportRequest);
+    // Vacation modal
+    $('btnCloseVacation')?.addEventListener('click', closeVacationModal);
+    $('vacationType')?.addEventListener('change', onVacationTypeChange);
+    $('condolenceType')?.addEventListener('change', onCondolenceTypeChange);
+    $('btnCancelVacation')?.addEventListener('click', closeVacationModal);
+    $('vacationForm')?.addEventListener('submit', submitVacation);
+    // Vacation edit modal
+    $('btnCloseEdit')?.addEventListener('click', closeVacationEditModal);
+    $('btnCancelEdit')?.addEventListener('click', closeVacationEditModal);
+    $('vacationEditForm')?.addEventListener('submit', submitVacationEdit);
+    // Detail modal
+    $('btnCloseDetail')?.addEventListener('click', () => $('vacationDetailModal').classList.add('hidden'));
+    // Password modal
+    $('btnClosePassword')?.addEventListener('click', closePasswordModal);
+    $('btnCancelPassword')?.addEventListener('click', closePasswordModal);
+    $('passwordForm')?.addEventListener('submit', changePassword);
+}
 
 async function checkAuth() {
     try {

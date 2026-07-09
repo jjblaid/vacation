@@ -77,7 +77,7 @@ function selected($a, $b) { return $a == $b ? 'selected' : ''; }
                         <span class="user"><?= htmlspecialchars($_SESSION['user']['name']) ?>님</span>
                         <a href="index.php" class="btn btn-sm btn-secondary">메인으로</a>
                         <a href="admin.php" class="btn btn-sm btn-secondary">관리자</a>
-                        <button class="btn btn-sm btn-secondary" onclick="location.reload()">🔄 새로고침</button>
+                        <button id="btnRefresh" class="btn btn-sm btn-secondary">🔄 새로고침</button>
                     </div>
                 </div>
                 <div class="tabs" style="padding:0 24px;">
@@ -86,12 +86,12 @@ function selected($a, $b) { return $a == $b ? 'selected' : ''; }
 <?php if (!$isActiveView): ?>
                     <form method="get" action="login_status.php" style="display:flex;gap:6px;margin-left:auto;">
                         <input type="hidden" name="view" value="all">
-                        <select name="year" onchange="this.form.submit()" style="padding:6px 10px;border-radius:6px;border:1px solid #e2e8f0;font-size:13px;">
+                        <select id="filterYear" name="year" style="padding:6px 10px;border-radius:6px;border:1px solid #e2e8f0;font-size:13px;">
 <?php for ($y = intval(date('Y')); $y >= intval(date('Y')) - 5; $y--): ?>
                             <option value="<?= $y ?>" <?= selected($y, $year) ?>><?= $y ?>년</option>
 <?php endfor; ?>
                         </select>
-                        <select name="month" onchange="this.form.submit()" style="padding:6px 10px;border-radius:6px;border:1px solid #e2e8f0;font-size:13px;">
+                        <select id="filterMonth" name="month" style="padding:6px 10px;border-radius:6px;border:1px solid #e2e8f0;font-size:13px;">
 <?php for ($m = 1; $m <= 12; $m++): ?>
                             <option value="<?= $m ?>" <?= selected($m, $month) ?>><?= $m ?>월</option>
 <?php endfor; ?>
@@ -148,5 +148,10 @@ function selected($a, $b) { return $a == $b ? 'selected' : ''; }
             </div>
         </div>
     </div>
+<script>
+document.getElementById('btnRefresh').addEventListener('click', () => location.reload());
+document.getElementById('filterYear').addEventListener('change', function() { this.form.submit(); });
+document.getElementById('filterMonth').addEventListener('change', function() { this.form.submit(); });
+</script>
 </body>
 </html>

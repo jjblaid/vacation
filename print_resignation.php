@@ -145,13 +145,13 @@ $today = date('Y년  m월  d일');
             style="width:100%; padding:10px; font-size:14px; font-family:'Noto Sans KR',sans-serif;
                    border:1px solid #ccc; border-radius:4px; resize:vertical; margin-bottom:10px;"></textarea>
         <div>
-            <button onclick="printWithReason()"
+            <button id="btnPrintResign"
                 style="padding:8px 28px; font-size:14px; background:#222; color:#fff;
                        border:none; cursor:pointer; border-radius:3px;
                        font-family:'Noto Sans KR',sans-serif;">
                 🖨 인쇄
             </button>
-            <button onclick="window.close()"
+            <button id="btnCloseResign"
                 style="margin-left:10px; padding:8px 20px; font-size:14px; background:#fff;
                        color:#444; border:1px solid #aaa; cursor:pointer; border-radius:3px;
                        font-family:'Noto Sans KR',sans-serif;">
@@ -250,11 +250,14 @@ $today = date('Y년  m월  d일');
 </div>
 
 <script>
-function printWithReason() {
+document.getElementById('btnPrintResign').addEventListener('click', function() {
     var reason = document.getElementById('reasonInput').value;
     document.getElementById('printReason').textContent = reason;
     window.print();
-}
+});
+document.getElementById('btnCloseResign').addEventListener('click', function() {
+    window.close();
+});
 </script>
 </body>
 </html>

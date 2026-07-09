@@ -53,11 +53,11 @@ require_once __DIR__ . '/config/security.php';
                         <div class="user-name" id="userName">-</div>
                         <div class="user-role" id="userRole">-</div>
                     </div>
-                    <button class="btn btn-sm btn-secondary" onclick="showPasswordModal()">비밀번호 변경</button>
+                    <button id="btnShowPassword" class="btn btn-sm btn-secondary">비밀번호 변경</button>
                     <a href="admin.php" id="adminLink" class="btn btn-sm btn-secondary hidden">관리자</a>
-                    <button id="annualLeaveBtn" class="btn btn-sm btn-secondary hidden" onclick="toggleAnnualLeaveView()">연차 현황</button>
-                    <button class="btn btn-sm btn-secondary" onclick="addToFavorites()">즐겨찾기 추가</button>
-                    <button class="btn btn-sm btn-secondary" onclick="logout()">로그아웃</button>
+                    <button id="annualLeaveBtn" class="btn btn-sm btn-secondary hidden">연차 현황</button>
+                    <button id="btnAddFavorites" class="btn btn-sm btn-secondary">즐겨찾기 추가</button>
+                    <button id="btnLogout" class="btn btn-sm btn-secondary">로그아웃</button>
                 </div>
             </div>
         </header>
@@ -92,21 +92,21 @@ require_once __DIR__ . '/config/security.php';
                 <div class="section-header">
                     <h2 class="section-title">📅 휴가 캘린더</h2>
                     <div style="display:flex; gap:8px;">
-                        <button class="btn btn-secondary" id="btnPrintResign" style="display:none;" onclick="printResignation()">📄 퇴직원</button>
+                        <button class="btn btn-secondary" id="btnPrintResign" style="display:none;">📄 퇴직원</button>
                         <div class="tab-dropdown" style="flex-shrink:0;">
-                            <button class="btn btn-secondary" onclick="toggleSupportMenu(event)">📋 행정지원요청 ▾</button>
+                            <button id="btnSupportMenu" class="btn btn-secondary">📋 행정지원요청 ▾</button>
                             <div class="tab-dropdown-menu" id="supportMenu">
                                 <div class="tab-dropdown-group-label">증명서</div>
-                                <button class="tab-dropdown-item" onclick="requestCertificate('career')">📜 경력증명서</button>
-                                <button class="tab-dropdown-item" onclick="requestCertificate('employment')">📜 재직증명서</button>
+                                <button class="tab-dropdown-item" id="btnCertCareer">📜 경력증명서</button>
+                                <button class="tab-dropdown-item" id="btnCertEmployment">📜 재직증명서</button>
                                 <div class="tab-dropdown-divider"></div>
                                 <div class="tab-dropdown-group-label">행정지원</div>
-                                <button class="tab-dropdown-item" onclick="openSupportModal('id_card','사원증')">🪪 사원증 발급</button>
-                                <button class="tab-dropdown-item" onclick="openSupportModal('business_card','명함')">💳 명함 발급</button>
-                                <button class="tab-dropdown-item" onclick="openSupportModal('office_supply','사무용품')">📎 사무용품 신청</button>
+                                <button class="tab-dropdown-item" id="btnSupportIdCard">🪪 사원증 발급</button>
+                                <button class="tab-dropdown-item" id="btnSupportBizCard">💳 명함 발급</button>
+                                <button class="tab-dropdown-item" id="btnSupportOffice">📎 사무용품 신청</button>
                             </div>
                         </div>
-                        <button class="btn btn-primary" onclick="showVacationModal()">+ 휴가 신청</button>
+                        <button id="btnShowVacation" class="btn btn-primary">+ 휴가 신청</button>
                     </div>
                 </div>
                 <div class="section-body">
@@ -130,23 +130,23 @@ require_once __DIR__ . '/config/security.php';
     <div style="display:flex;align-items:center;gap:12px;">
         <h2 class="section-title">📋 휴가 신청 내역</h2>
         <label id="myOnlyLabel" style="display:none;align-items:center;gap:6px;cursor:pointer;font-size:13px;white-space:nowrap;user-select:none;">
-            <input type="checkbox" id="showMyOnly" onchange="toggleMyVacationOnly()">
+            <input type="checkbox" id="showMyOnly">
             내 휴가만 보기
         </label>
     </div>
     <div style="display:flex; gap:10px;">
-        <select id="filterDept" onchange="filterByDept()" style="padding:8px 12px; border-radius:8px; border:1px solid #e2e8f0; display:none;">
+        <select id="filterDept" style="padding:8px 12px; border-radius:8px; border:1px solid #e2e8f0; display:none;">
             <option value="">전체 본부</option>
         </select>
-        <select id="filterEmp" onchange="filterByEmp()" style="padding:8px 12px; border-radius:8px; border:1px solid #e2e8f0; display:none;">
+        <select id="filterEmp" style="padding:8px 12px; border-radius:8px; border:1px solid #e2e8f0; display:none;">
             <option value="">전체 사원</option>
         </select>
-        <select id="filterYear" onchange="filterByYear()" style="padding:8px 12px; border-radius:8px; border:1px solid #e2e8f0;">
+        <select id="filterYear" style="padding:8px 12px; border-radius:8px; border:1px solid #e2e8f0;">
         </select>
-        <select id="filterMonth" onchange="filterByYear()" style="padding:8px 12px; border-radius:8px; border:1px solid #e2e8f0;">
+        <select id="filterMonth" style="padding:8px 12px; border-radius:8px; border:1px solid #e2e8f0;">
         </select>
         <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;white-space:nowrap;user-select:none;">
-            <input type="checkbox" id="showCancelled" onchange="filterByYear()">
+            <input type="checkbox" id="showCancelled">
             취소 내역 포함
         </label>
     </div>
@@ -176,9 +176,9 @@ require_once __DIR__ . '/config/security.php';
                 <div class="section-header">
                     <h2 class="section-title">📊 연차 현황</h2>
                     <div style="display:flex; gap:10px;">
-                        <select id="annualLeaveYear" onchange="loadEmployeeAnnualList()" style="padding:8px 12px; border-radius:8px; border:1px solid #e2e8f0;">
+                        <select id="annualLeaveYear" style="padding:8px 12px; border-radius:8px; border:1px solid #e2e8f0;">
                         </select>
-                        <button class="btn btn-sm btn-secondary" onclick="toggleAnnualLeaveView()">휴가 관리로 돌아가기</button>
+                        <button id="btnBackToVacation" class="btn btn-sm btn-secondary">휴가 관리로 돌아가기</button>
                     </div>
                 </div>
                 <div class="section-body">
@@ -210,7 +210,7 @@ require_once __DIR__ . '/config/security.php';
         <div class="modal" style="max-width:420px;">
             <div class="modal-header">
                 <h3 class="modal-title" id="certModalTitle">증명서 발급 요청</h3>
-                <button class="modal-close" onclick="closeCertificateModal()">&times;</button>
+                <button class="modal-close" id="btnCloseCert">&times;</button>
             </div>
             <div class="modal-body">
                 <p style="margin-bottom:12px; font-size:14px; color:#333;">증명서 옵션을 선택해주세요.</p>
@@ -227,7 +227,7 @@ require_once __DIR__ . '/config/security.php';
                 </div>
                 <div id="certJobDescRow">
                     <label class="checkbox-row">
-                        <input type="checkbox" id="certJobDesc" onchange="toggleJobDescContent()">
+                        <input type="checkbox" id="certJobDesc">
                         업무기재
                     </label>
                     <div id="certJobDescContentGroup" class="hidden" style="padding-left:26px; margin-bottom:8px;">
@@ -243,8 +243,8 @@ require_once __DIR__ . '/config/security.php';
                     영문
                 </label>
                 <div style="display:flex; gap:8px; margin-top:16px;">
-                    <button class="btn btn-primary" onclick="submitCertificate()" style="flex:1;">제출</button>
-                    <button class="btn btn-secondary" onclick="closeCertificateModal()" style="flex:1;">취소</button>
+                    <button id="btnSubmitCert" class="btn btn-primary" style="flex:1;">제출</button>
+                    <button id="btnCancelCert" class="btn btn-secondary" style="flex:1;">취소</button>
                 </div>
             </div>
         </div>
@@ -255,7 +255,7 @@ require_once __DIR__ . '/config/security.php';
         <div class="modal" style="max-width:450px;">
             <div class="modal-header">
                 <h3 class="modal-title" id="supportModalTitle">행정지원 요청</h3>
-                <button class="modal-close" onclick="closeSupportModal()">&times;</button>
+                <button class="modal-close" id="btnCloseSupport">&times;</button>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="supportType">
@@ -266,8 +266,8 @@ require_once __DIR__ . '/config/security.php';
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeSupportModal()">취소</button>
-                <button class="btn btn-primary" onclick="submitSupportRequest()">제출</button>
+                <button id="btnCancelSupport" class="btn btn-secondary">취소</button>
+                <button id="btnSubmitSupport" class="btn btn-primary">제출</button>
             </div>
         </div>
     </div>
@@ -277,19 +277,19 @@ require_once __DIR__ . '/config/security.php';
         <div class="modal">
             <div class="modal-header">
                 <h3 class="modal-title">휴가 신청</h3>
-                <button class="modal-close" onclick="closeVacationModal()">&times;</button>
+                <button class="modal-close" id="btnCloseVacation">&times;</button>
             </div>
-            <form id="vacationForm" onsubmit="submitVacation(event)">
+            <form id="vacationForm">
                 <div class="modal-body">
                     <div class="form-group">
                         <label>휴가 유형</label>
-                        <select id="vacationType" required onchange="onVacationTypeChange()">
+                        <select id="vacationType" required>
                             <option value="">선택하세요</option>
                         </select>
                     </div>
                     <div class="form-group" id="condolenceTypeGroup" style="display:none;">
                         <label>경조사사유</label>
-                        <select id="condolenceType" onchange="onCondolenceTypeChange()">
+                        <select id="condolenceType">
                             <option value="">선택하세요</option>
                         </select>
                     </div>
@@ -350,7 +350,7 @@ require_once __DIR__ . '/config/security.php';
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeVacationModal()">취소</button>
+                    <button type="button" class="btn btn-secondary" id="btnCancelVacation">취소</button>
                     <button type="submit" class="btn btn-primary">신청하기</button>
                 </div>
             </form>
@@ -362,9 +362,9 @@ require_once __DIR__ . '/config/security.php';
         <div class="modal">
             <div class="modal-header">
                 <h3 class="modal-title">휴가 수정</h3>
-                <button class="modal-close" onclick="closeVacationEditModal()">&times;</button>
+                <button class="modal-close" id="btnCloseEdit">&times;</button>
             </div>
-            <form id="vacationEditForm" onsubmit="submitVacationEdit(event)">
+            <form id="vacationEditForm">
                 <input type="hidden" id="editRequestId">
                 <div class="modal-body">
                     <div class="form-group">
@@ -421,7 +421,7 @@ require_once __DIR__ . '/config/security.php';
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeVacationEditModal()">취소</button>
+                    <button type="button" class="btn btn-secondary" id="btnCancelEdit">취소</button>
                     <button type="submit" class="btn btn-primary">저장하기</button>
                 </div>
             </form>
@@ -433,7 +433,7 @@ require_once __DIR__ . '/config/security.php';
         <div class="modal">
             <div class="modal-header">
                 <h3 class="modal-title">휴가 상세</h3>
-                <button class="modal-close" onclick="document.getElementById('vacationDetailModal').classList.add('hidden')">&times;</button>
+                <button class="modal-close" id="btnCloseDetail">&times;</button>
             </div>
             <div class="modal-body" id="detailContent"></div>
         </div>
@@ -444,9 +444,9 @@ require_once __DIR__ . '/config/security.php';
         <div class="modal">
             <div class="modal-header">
                 <h3 class="modal-title">비밀번호 변경</h3>
-                <button class="modal-close" onclick="closePasswordModal()">&times;</button>
+                <button class="modal-close" id="btnClosePassword">&times;</button>
             </div>
-            <form id="passwordForm" onsubmit="return changePassword(event)">
+            <form id="passwordForm">
                 <div class="modal-body">
                     <div class="form-group">
                         <label>현재 비밀번호</label>
@@ -462,7 +462,7 @@ require_once __DIR__ . '/config/security.php';
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closePasswordModal()">취소</button>
+                    <button type="button" class="btn btn-secondary" id="btnCancelPassword">취소</button>
                     <button type="submit" class="btn btn-primary">변경</button>
                 </div>
             </form>
