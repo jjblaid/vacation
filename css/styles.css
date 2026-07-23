@@ -876,3 +876,10 @@ tr:hover {
 .calendar-list { list-style:none; padding:0; }
 .calendar-item { padding:8px; border-bottom:1px solid #eee; }
 .flex-btn-row { display:flex; justify-content:center; gap:8px; margin-top:16px; }
+.flex-btn-row .btn-primary {
+    background: var(--primary);
+    color: #fff;
+    font-weight: 700;
+    border: 2px solid var(--primary-dark);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+}

@@ -388,7 +388,7 @@ async function loadVacationTypes() {
 async function loadVacationList(year, month, page, empId, deptId, showCancelled) {
     year = year || new Date().getFullYear();
     month = month || null;
-    page = page || 1;
+    page = parseInt(page) || 1;
     if (showCancelled === undefined) {
         showCancelled = document.getElementById('showCancelled')?.checked || false;
     }
@@ -441,10 +441,28 @@ function renderPagination(total, page, limit, year, month, empId, deptId, showCa
     
     const uid = 'p' + Date.now();
     _pageParams[uid] = { year, month: month ?? null, empId: empId ?? null, deptId: deptId ?? null, showCancelled };
-    let html = '<div class="flex-btn-row">';
-    for (let i = 1; i <= totalPages; i++) {
+
+    const windowSize = 5;
+    let startPage = Math.max(1, page - Math.floor(windowSize / 2));
+    let endPage = Math.min(totalPages, startPage + windowSize - 1);
+    if (endPage - startPage < windowSize - 1) {
+        startPage = Math.max(1, endPage - windowSize + 1);
+    }
+
+    let html = '<div class="flex-btn-row items-center gap-6">';
+
+    if (page > 1) {
+        html += `<button class="btn btn-sm btn-secondary" data-action="loadVacationList" data-uid="${uid}" data-page="1">&lt;&lt;</button>`;
+        html += `<button class="btn btn-sm btn-secondary" data-action="loadVacationList" data-uid="${uid}" data-page="${page - 1}">&lt;</button>`;
+    }
+    for (let i = startPage; i <= endPage; i++) {
         html += `<button class="btn btn-sm ${i === page ? 'btn-primary' : 'btn-secondary'}" data-action="loadVacationList" data-uid="${uid}" data-page="${i}">${i}</button>`;
     }
+    if (page < totalPages) {
+        html += `<button class="btn btn-sm btn-secondary" data-action="loadVacationList" data-uid="${uid}" data-page="${page + 1}">&gt;</button>`;
+        html += `<button class="btn btn-sm btn-secondary" data-action="loadVacationList" data-uid="${uid}" data-page="${totalPages}">&gt;&gt;</button>`;
+    }
+
     html += '</div>';
     
     const tbody = document.getElementById('vacationList');
@@ -460,14 +478,14 @@ function renderVacationTable(data) {
     const tbody = document.getElementById('vacationList');
     if (!tbody) return;
     
+    const showEmployeeInfo = ['system_admin', 'reviewer', 'dept_manager', 'ceo', 'vice_president'].includes(currentUser.role);
+    const canApprove = ['system_admin'].includes(currentUser.role);
+    const canEdit = ['user', 'dept_manager'].includes(currentUser.role);
+    
     if (data.length === 0) {
         tbody.innerHTML = '<tr><td colspan="' + (showEmployeeInfo ? 7 : 5) + '" class="empty-message">휴가 신청 내역이 없습니다.</td></tr>';
         return;
     }
-    
-    const showEmployeeInfo = ['system_admin', 'reviewer', 'dept_manager', 'ceo', 'vice_president'].includes(currentUser.role);
-    const canApprove = ['system_admin'].includes(currentUser.role);
-    const canEdit = ['user', 'dept_manager'].includes(currentUser.role);
     
     let headerHtml = '<tr>';
     if (showEmployeeInfo) headerHtml += '<th>사원</th><th>부서</th>';
