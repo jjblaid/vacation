@@ -128,7 +128,8 @@ $action = $_GET['action'] ?? $_POST['action'] ?? '';
 switch ($action) {
     case 'request':
         requireAuth();
-        $input = json_decode(file_get_contents('php://input'), true);
+        requireCsrfToken();
+        $input = $_PARSED_BODY;
         $employeeId = intval($input['employee_id'] ?? $_SESSION['user_id']);
         $certificateType = $input['certificate_type'] ?? '';
         $showResident = intval($input['show_resident'] ?? 0);
@@ -210,7 +211,8 @@ switch ($action) {
     
     case 'complete':
         requireAdmin();
-        $input = json_decode(file_get_contents('php://input'), true);
+        requireCsrfToken();
+        $input = $_PARSED_BODY;
         $id = intval($input['id'] ?? 0);
         $notes = trim($input['notes'] ?? '');
         
@@ -229,6 +231,7 @@ switch ($action) {
     
     case 'test_email':
         requireAdmin();
+        requireCsrfToken();
         $db = getDB();
         $stmt = $db->prepare("SELECT name, email FROM employees WHERE id = ?");
         $stmt->execute([$_SESSION['user_id']]);

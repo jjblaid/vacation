@@ -45,30 +45,6 @@ if (!defined('AUTH_INCLUDED')) {
     }
 }
 
-function generateCsrfToken() {
-    if (empty($_SESSION['csrf_token'])) {
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-    }
-    return $_SESSION['csrf_token'];
-}
-
-function verifyCsrfToken($token) {
-    if (empty($_SESSION['csrf_token']) || empty($token)) {
-        return false;
-    }
-    return hash_equals($_SESSION['csrf_token'], $token);
-}
-
-function requireCsrfToken() {
-    $input = json_decode(file_get_contents('php://input'), true);
-    $token = $input['csrf_token'] ?? $_POST['csrf_token'] ?? $_GET['csrf_token'] ?? '';
-    if (!verifyCsrfToken($token)) {
-        http_response_code(403);
-        echo json_encode(['error' => 'CSRF 토큰이 유효하지 않습니다.']);
-        exit;
-    }
-}
-
 function login() {
     $input = json_decode(file_get_contents('php://input'), true);
     
@@ -194,20 +170,13 @@ function autoCreateNextYearLeave() {
 
 function changePassword() {
     requireAuth();
-    $input = json_decode(file_get_contents('php://input'), true);
-    
-    $token = $input['csrf_token'] ?? '';
-    if (empty($_SESSION['csrf_token']) || empty($token) || !hash_equals($_SESSION['csrf_token'], $token)) {
-        http_response_code(403);
-        echo json_encode(['error' => 'CSRF 토큰이 유효하지 않습니다.']);
-        return;
-    }
+    requireCsrfToken();
     
     $user = $_SESSION['user'];
     
-    $currentPassword = $input['current_password'] ?? '';
-    $newPassword = $input['new_password'] ?? '';
-    $confirmPassword = $input['confirm_password'] ?? '';
+    $currentPassword = $_PARSED_BODY['current_password'] ?? '';
+    $newPassword = $_PARSED_BODY['new_password'] ?? '';
+    $confirmPassword = $_PARSED_BODY['confirm_password'] ?? '';
     
     if (empty($currentPassword) || empty($newPassword) || empty($confirmPassword)) {
         http_response_code(400);

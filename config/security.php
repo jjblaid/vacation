@@ -30,3 +30,29 @@ $csp =
     . "form-action 'self';";
 
 header("Content-Security-Policy: $csp");
+
+$_PARSED_BODY = json_decode(file_get_contents('php://input'), true) ?? [];
+
+function generateCsrfToken() {
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+
+function verifyCsrfToken($token) {
+    if (empty($_SESSION['csrf_token']) || empty($token)) {
+        return false;
+    }
+    return hash_equals($_SESSION['csrf_token'], $token);
+}
+
+function requireCsrfToken() {
+    global $_PARSED_BODY;
+    $token = $_PARSED_BODY['csrf_token'] ?? $_POST['csrf_token'] ?? $_GET['csrf_token'] ?? '';
+    if (!verifyCsrfToken($token)) {
+        http_response_code(403);
+        echo json_encode(['error' => 'CSRF 토큰이 유효하지 않습니다.']);
+        exit;
+    }
+}

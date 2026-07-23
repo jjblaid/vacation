@@ -42,12 +42,15 @@ switch ($action) {
         getEmployee();
         break;
     case 'create':
+        requireCsrfToken();
         createEmployee();
         break;
     case 'update':
+        requireCsrfToken();
         updateEmployee();
         break;
     case 'delete':
+        requireCsrfToken();
         deleteEmployee();
         break;
     case 'departments':
@@ -55,6 +58,21 @@ switch ($action) {
         break;
     case 'severance_usage':
         getSeveranceUsage();
+        break;
+    case 'department_create':
+        requireAdmin();
+        requireCsrfToken();
+        createDepartment();
+        break;
+    case 'department_update':
+        requireAdmin();
+        requireCsrfToken();
+        updateDepartment();
+        break;
+    case 'department_delete':
+        requireAdmin();
+        requireCsrfToken();
+        deleteDepartment();
         break;
     default:
         http_response_code(400);
@@ -375,5 +393,58 @@ function getDepartments() {
     }
     
     echo json_encode(['success' => true, 'data' => $departments]);
+}
+
+function createDepartment() {
+    global $_PARSED_BODY;
+    $code = trim($_PARSED_BODY['code'] ?? '');
+    $name = trim($_PARSED_BODY['name'] ?? '');
+    $color = $_PARSED_BODY['color'] ?? '#667eea';
+
+    if (empty($name)) {
+        http_response_code(400);
+        echo json_encode(['error' => '부서명은 필수입니다.']);
+        return;
+    }
+
+    $db = getDB();
+    $stmt = $db->prepare("INSERT INTO departments (code, name, color) VALUES (?, ?, ?)");
+    $stmt->execute([$code, $name, $color]);
+    echo json_encode(['success' => true, 'id' => $db->lastInsertId()]);
+}
+
+function updateDepartment() {
+    global $_PARSED_BODY;
+    $id = intval($_PARSED_BODY['id'] ?? 0);
+    $code = trim($_PARSED_BODY['code'] ?? '');
+    $name = trim($_PARSED_BODY['name'] ?? '');
+    $color = $_PARSED_BODY['color'] ?? '#667eea';
+
+    if (empty($name)) {
+        http_response_code(400);
+        echo json_encode(['error' => '부서명은 필수입니다.']);
+        return;
+    }
+
+    $db = getDB();
+    $stmt = $db->prepare("UPDATE departments SET code=?, name=?, color=? WHERE id=?");
+    $stmt->execute([$code, $name, $color, $id]);
+    echo json_encode(['success' => true]);
+}
+
+function deleteDepartment() {
+    global $_PARSED_BODY;
+    $id = intval($_PARSED_BODY['id'] ?? 0);
+
+    $db = getDB();
+    $stmt = $db->prepare("UPDATE employees SET department_id = NULL WHERE department_id = ?");
+    $stmt->execute([$id]);
+
+    $stmt = $db->prepare("UPDATE employees SET managed_department_id = NULL WHERE managed_department_id = ?");
+    $stmt->execute([$id]);
+
+    $stmt = $db->prepare("DELETE FROM departments WHERE id = ?");
+    $stmt->execute([$id]);
+    echo json_encode(['success' => true]);
 }
 

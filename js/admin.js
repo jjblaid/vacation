@@ -99,6 +99,11 @@ function initAdminEventListeners() {
     // Type modal
     $('btnCloseType')?.addEventListener('click', closeTypeModal);
     $('btnCancelType')?.addEventListener('click', closeTypeModal);
+    // Form submit listeners (CSP-safe, replacing inline onsubmit)
+    $('departmentForm')?.addEventListener('submit', saveDepartment);
+    $('positionForm')?.addEventListener('submit', savePosition);
+    $('holidayForm')?.addEventListener('submit', saveHoliday);
+    $('typeForm')?.addEventListener('submit', saveType);
 }
 
         function showTab(tab) {
@@ -1200,7 +1205,7 @@ const data = {
             resultEl.textContent = '테스트 발송 중...';
             resultEl.style.color = '#666';
             try {
-                const res = await api.request('certificate.php?action=test_email');
+                const res = await api.request('certificate.php?action=test_email', { method: 'POST', body: new URLSearchParams() });
                 if (res.success) {
                     resultEl.innerHTML = '✅ 테스트 이메일이 발송되었습니다.';
                     resultEl.style.color = '#16a34a';

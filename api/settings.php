@@ -33,7 +33,8 @@ switch ($action) {
         break;
 
     case 'save':
-        $input = json_decode(file_get_contents('php://input'), true);
+        requireCsrfToken();
+        $input = $_PARSED_BODY;
         if (!$input) {
             http_response_code(400);
             echo json_encode(['error' => '잘못된 요청입니다.']);

@@ -10,18 +10,6 @@ require_once __DIR__ . '/../config/security.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
-$_PARSED_BODY = json_decode(file_get_contents('php://input'), true) ?? [];
-
-function requireCsrfToken() {
-    global $_PARSED_BODY;
-    $token = $_PARSED_BODY['csrf_token'] ?? $_POST['csrf_token'] ?? $_GET['csrf_token'] ?? '';
-    if (empty($_SESSION['csrf_token']) || empty($token) || !hash_equals($_SESSION['csrf_token'], $token)) {
-        http_response_code(403);
-        echo json_encode(['error' => 'CSRF 토큰이 유효하지 않습니다.']);
-        exit;
-    }
-}
-
 $action = $_GET['action'] ?? $_POST['action'] ?? '';
 
 if (empty($action)) {

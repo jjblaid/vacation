@@ -116,7 +116,8 @@ $action = $_GET['action'] ?? $_POST['action'] ?? '';
 switch ($action) {
     case 'request':
         requireAuth();
-        $input = json_decode(file_get_contents('php://input'), true);
+        requireCsrfToken();
+        $input = $_PARSED_BODY;
         $employeeId = intval($input['employee_id'] ?? $_SESSION['user_id']);
         $requestType = $input['request_type'] ?? '';
         $content = trim($input['content'] ?? '');
@@ -188,7 +189,8 @@ switch ($action) {
 
     case 'complete':
         requireAdmin();
-        $input = json_decode(file_get_contents('php://input'), true);
+        requireCsrfToken();
+        $input = $_PARSED_BODY;
         $id = intval($input['id'] ?? 0);
         $status = $input['status'] ?? 'completed';
         $notes = trim($input['notes'] ?? '');

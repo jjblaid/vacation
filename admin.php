@@ -313,7 +313,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
                     <h3 class="modal-title" id="departmentModalTitle">부서 추가</h3>
                     <button class="modal-close" id="btnCloseDept">&times;</button>
                 </div>
-                <form id="departmentForm" onsubmit="saveDepartment(event)">
+                <form id="departmentForm">
                     <input type="hidden" id="deptId">
                     <div class="modal-body">
                         <div class="form-group">
@@ -344,7 +344,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
                     <h3 class="modal-title" id="positionModalTitle">직급 추가</h3>
                     <button class="modal-close" id="btnClosePosition">&times;</button>
                 </div>
-                <form id="positionForm" onsubmit="savePosition(event)">
+                <form id="positionForm">
                     <input type="hidden" id="positionId">
                     <div class="modal-body">
                         <div class="form-group">
@@ -394,7 +394,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
                     <h3 class="modal-title" id="holidayModalTitle">공휴일 추가</h3>
                     <button class="modal-close" id="btnCloseHoliday">&times;</button>
                 </div>
-                <form id="holidayForm" onsubmit="saveHoliday(event)">
+                <form id="holidayForm">
                     <input type="hidden" id="holidayId">
                     <div class="modal-body">
                         <div class="form-group">
@@ -783,7 +783,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
                 <h3 class="modal-title" id="typeModalTitle">휴가 유형 추가</h3>
                 <button class="modal-close" id="btnCloseType">&times;</button>
             </div>
-            <form id="typeForm" onsubmit="saveType(event)">
+            <form id="typeForm">
                 <div class="modal-body">
                     <input type="hidden" id="typeId">
                     <div class="form-group">
