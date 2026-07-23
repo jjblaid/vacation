@@ -88,10 +88,11 @@ function initAdminEventListeners() {
     $('pwVerifyToggle')?.addEventListener('click', togglePwVerifyVisible);
     $('btnCancelPwVerify')?.addEventListener('click', closePasswordVerifyModal);
     $('btnConfirmPwVerify')?.addEventListener('click', confirmPasswordVerify);
+    $('pwVerifyInput')?.addEventListener('keydown', function(e) { if (e.key === 'Enter') confirmPasswordVerify(); });
     // Employee modal
     $('btnCloseEmployee')?.addEventListener('click', closeEmployeeModal);
     $('empIsActive')?.addEventListener('change', function() {
-        document.getElementById('empResignDate').style.display = this.checked ? 'block' : 'none';
+        document.getElementById('empResignDate').classList.toggle('hidden', !this.checked);
     });
     $('btnCancelEmployee')?.addEventListener('click', closeEmployeeModal);
     $('btnSaveEmployee')?.addEventListener('click', saveEmployee);
@@ -181,7 +182,7 @@ if (tab === 'resigning') {
         function renderHolidays(holidays) {
             const tbody = document.getElementById('holidaysList');
             if (!holidays || holidays.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">공휴일 데이터가 없습니다.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="3" class="empty-message">공휴일 데이터가 없습니다.</td></tr>';
                 return;
             }
             tbody.innerHTML = holidays.map(h => `
@@ -279,7 +280,7 @@ let resigningSeveranceUsageCache = {};
         }
 
 async function loadResignedEmployees() {
-    document.getElementById('resignedVacationHistory').style.display = 'none';
+    document.getElementById('resignedVacationHistory').classList.add('hidden');
     const res = await api.employees.list({ active: 0 });
     resignedEmployees = res.data;
     renderResignedEmployees();
@@ -308,7 +309,7 @@ async function loadResignedEmployees() {
  }
 
 async function loadResigningEmployees() {
-     document.getElementById('resigningVacationHistory').style.display = 'none';
+     document.getElementById('resigningVacationHistory').classList.add('hidden');
      // First get all employees
      const res = await api.employees.list();
      // Filter for resigning employees (is_resigning = 1)
@@ -320,7 +321,7 @@ async function loadResigningEmployees() {
 
         function renderResignedEmployees() {
             document.getElementById('resignedList').innerHTML = resignedEmployees.map(e => `
-                <tr data-action="showResignedHistory" data-id="${e.id}" data-name="${escapeHtml(e.name)}" style="cursor:pointer;">
+                <tr data-action="showResignedHistory" data-id="${e.id}" data-name="${escapeHtml(e.name)}" class="cursor-pointer">
                     <td>${e.emp_no}</td>
                     <td>${escapeHtml(e.name)}</td>
                     <td>${escapeHtml(e.department_name)}</td>
@@ -339,7 +340,7 @@ async function loadResigningEmployees() {
                  // Get severance usage for this employee
                  const usage = resigningSeveranceUsageCache[e.id] || { used: 0, remaining: 0 };
                  return `
-                  <tr data-action="showResigningHistory" data-id="${e.id}" data-name="${escapeHtml(e.name)}" style="cursor:pointer;">
+                  <tr data-action="showResigningHistory" data-id="${e.id}" data-name="${escapeHtml(e.name)}" class="cursor-pointer">
                       <td>${e.emp_no}</td>
                       <td>${e.name}</td>
                       <td>${e.department_name || '-'}</td>
@@ -358,7 +359,7 @@ async function loadResigningEmployees() {
 
          async function showResignedHistory(empId, empName) {
             document.getElementById('resignedEmployeeName').textContent = `${empName} - 휴가 신청 내역`;
-            document.getElementById('resignedVacationHistory').style.display = 'block';
+            document.getElementById('resignedVacationHistory').classList.remove('hidden');
             
             try {
                 const res = await api.vacationRequests.list(null, null, empId, null, false);
@@ -370,7 +371,7 @@ async function loadResigningEmployees() {
                         <td>${r.start_date} ~ ${r.end_date}</td>
                         <td>${r.days}</td>
                         <td><span class="status-badge status-${r.status}">${r.status === 'applied' ? '신청' : r.status === 'approved' ? '승인' : r.status === 'cancelled' ? '취소' : r.status}</span></td>
-                        <td style="text-align:left;">${r.reason || '-'}</td>
+                        <td class="td-left">${r.reason || '-'}</td>
                     </tr>
                 `).join('');
             } catch (err) {
@@ -380,7 +381,7 @@ async function loadResigningEmployees() {
 
         async function showResigningHistory(empId, empName) {
             document.getElementById('resigningEmployeeName').textContent = `${empName} - 휴가 신청 내역`;
-            document.getElementById('resigningVacationHistory').style.display = 'block';
+            document.getElementById('resigningVacationHistory').classList.remove('hidden');
             
             try {
                 const res = await api.vacationRequests.list(null, null, empId, null, false);
@@ -392,7 +393,7 @@ async function loadResigningEmployees() {
                         <td>${r.start_date} ~ ${r.end_date}</td>
                         <td>${r.days}</td>
                         <td><span class="status-badge status-${r.status}">${r.status === 'applied' ? '신청' : r.status === 'approved' ? '승인' : r.status === 'cancelled' ? '취소' : r.status}</span></td>
-                        <td style="text-align:left;">${r.reason || '-'}</td>
+                        <td class="td-left">${r.reason || '-'}</td>
                     </tr>
                 `).join('');
             } catch (err) {
@@ -436,12 +437,12 @@ function showEmployeeModal(id = null) {
     document.getElementById('empResidentNo').value = '';
     document.getElementById('empIsActive').checked = false;
     document.getElementById('empResignationDate').value = '';
-    document.getElementById('empResignDate').style.display = 'none';
+    document.getElementById('empResignDate').classList.add('hidden');
     document.getElementById('empIsResigning').checked = false;
     document.getElementById('empVisibleToExec').checked = false;
     document.getElementById('empSeveranceLeave').value = '';
-    document.getElementById('empResignGroup').style.display = 'none';
-    document.getElementById('empSeveranceGroup').style.display = 'none';
+    document.getElementById('empResignGroup').classList.add('hidden');
+    document.getElementById('empSeveranceGroup').classList.add('hidden');
     
     if (!id) {
         document.getElementById('empNo').disabled = false;
@@ -486,13 +487,13 @@ async         function editEmployee(id) {
     
     // Show resigning-related fields if employee is resigning or if we're checking the resigning checkbox
     const isResigning = emp.is_resigning == 1;
-    document.getElementById('empResignGroup').style.display = 'block';
-    document.getElementById('empSeveranceGroup').style.display = 'block';
+    document.getElementById('empResignGroup').classList.remove('hidden');
+    document.getElementById('empSeveranceGroup').classList.remove('hidden');
     if (isResigning) {
-        document.getElementById('empResignDate').style.display = 'block';
+        document.getElementById('empResignDate').classList.remove('hidden');
         document.getElementById('empSeveranceLeave').value = emp.severance_leave || '';
     } else {
-        document.getElementById('empResignDate').style.display = 'none';
+        document.getElementById('empResignDate').classList.add('hidden');
         document.getElementById('empSeveranceLeave').value = '';
     }
 }
@@ -550,7 +551,7 @@ const data = {
             if (!el) return;
             if (el.type === 'password') {
                 document.getElementById('pwVerifyInput').value = '';
-                document.getElementById('pwVerifyError').style.display = 'none';
+                document.getElementById('pwVerifyError').classList.add('hidden');
                 document.getElementById('passwordVerifyModal').classList.remove('hidden');
                 document.getElementById('pwVerifyInput').focus();
             } else {
@@ -582,7 +583,7 @@ const data = {
             const pw = document.getElementById('pwVerifyInput').value;
             if (!pw) {
                 document.getElementById('pwVerifyError').textContent = '비밀번호를 입력하세요.';
-                document.getElementById('pwVerifyError').style.display = 'block';
+                document.getElementById('pwVerifyError').classList.remove('hidden');
                 return;
             }
             try {
@@ -597,7 +598,7 @@ const data = {
                 }
             } catch (err) {
                 document.getElementById('pwVerifyError').textContent = '비밀번호가 올바르지 않습니다.';
-                document.getElementById('pwVerifyError').style.display = 'block';
+                document.getElementById('pwVerifyError').classList.remove('hidden');
                 document.getElementById('pwVerifyInput').value = '';
                 document.getElementById('pwVerifyInput').focus();
             }
@@ -633,13 +634,13 @@ const data = {
             document.getElementById('typesList').innerHTML = vacationTypes.map((t, i) => `
                 <tr>
                     <td>${t.sort_order}</td>
-                    <td><span class="color-dot" style="background:${t.color}"></span>${t.name}</td>
+                    <td><span class="color-dot" data-color="${t.color}"></span>${t.name}</td>
                     <td>${t.deduction}</td>
                     <td>${t.max_days >= 999 ? '무제한' : t.max_days}</td>
                     <td>${deductNames[t.deduct_from]}</td>
                     <td>${t.count_all_days == 1 ? '포함' : '제외'}</td>
                     <td><input type="color" value="${t.color}" disabled></td>
-                    <td style="white-space:nowrap">
+                    <td class="td-nowrap">
                         <button class="btn btn-sm btn-secondary" data-action="moveType" data-id="${t.id}" data-dir="-1" ${i === 0 ? 'disabled' : ''}>▲</button>
                         <button class="btn btn-sm btn-secondary" data-action="moveType" data-id="${t.id}" data-dir="1" ${i === len - 1 ? 'disabled' : ''}>▼</button>
                         <button class="btn btn-sm btn-secondary" data-action="editType" data-id="${t.id}">수정</button>
@@ -647,6 +648,7 @@ const data = {
                     </td>
                 </tr>
             `).join('');
+            document.querySelectorAll('#typesList .color-dot').forEach(el => { el.style.background = el.dataset.color || '#ccc'; });
         }
         
         async function moveType(id, direction) {
@@ -838,13 +840,14 @@ const data = {
                 <tr>
                     <td>${d.code}</td>
                     <td>${d.name}</td>
-                    <td><span class="color-dot" style="background:${d.color}"></span>${d.color}</td>
+                    <td><span class="color-dot" data-color="${d.color}"></span>${d.color}</td>
                     <td>
                         <button class="btn btn-sm btn-secondary" data-action="editDepartment" data-id="${d.id}">수정</button>
                         <button class="btn btn-sm btn-danger" data-action="deleteDepartment" data-id="${d.id}">삭제</button>
                     </td>
                 </tr>
             `).join('');
+            document.querySelectorAll('#departmentsList .color-dot').forEach(el => { el.style.background = el.dataset.color || '#ccc'; });
         }
 
         function editDepartment(id) {
@@ -946,7 +949,7 @@ const data = {
                 annualLeaveData = data.data || [];
                 renderAnnualLeaveTable(annualLeaveData);
             } catch (err) {
-                tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:red;">데이터 로드 실패</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="9" class="error-message-red">데이터 로드 실패</td></tr>';
             }
         }
 
@@ -955,24 +958,24 @@ const data = {
             if (!tbody) return;
 
             if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;">데이터가 없습니다.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="9" class="empty-message">데이터가 없습니다.</td></tr>';
                 return;
             }
 
             tbody.innerHTML = data.map(emp => {
                 const remaining = emp.remaining;
-                const remainingClass = remaining < 0 ? 'color:#dc2626;font-weight:700;' :
-                                      remaining <= 3 ? 'color:#f59e0b;font-weight:600;' :
-                                      'color:#16a34a;';
+                const remainingClass = remaining < 0 ? 'remaining-negative' :
+                                      remaining <= 3 ? 'remaining-low' :
+                                      'remaining-ok';
                 return `<tr>
                     <td>${emp.name}</td>
-                    <td style="color:#64748b;font-size:13px;">${emp.emp_no}</td>
+                    <td class="td-muted">${emp.emp_no}</td>
                     <td>${emp.hire_date || '-'}</td>
                     <td>${emp.department_name || '-'}</td>
                     <td>${emp.position_name || '-'}</td>
-                    <td style="text-align:center;">${emp.granted.toFixed(1)}</td>
-                    <td style="text-align:center;">${emp.used.toFixed(1)}</td>
-                    <td style="text-align:center;${remainingClass}">${remaining.toFixed(1)}</td>
+                    <td class="td-center">${emp.granted.toFixed(1)}</td>
+                    <td class="td-center">${emp.used.toFixed(1)}</td>
+                    <td class="td-center ${remainingClass}">${remaining.toFixed(1)}</td>
                     <td>
                         <button class="btn btn-sm btn-secondary" data-action="editAnnualLeave" data-id="${emp.id}">수정</button>
                     </td>
@@ -988,7 +991,7 @@ const data = {
             document.getElementById('aleEmployeeId').value = emp.id;
             document.getElementById('aleYear').value = year;
             document.getElementById('aleEmployeeInfo').innerHTML =
-                `<strong>${emp.name}</strong> (${emp.emp_no}) - ${emp.department_name || '-'} · ${emp.position_name || '-'}<br><small style="color:#64748b;">${year}년 부여연차를 수정합니다.</small>`;
+                `<strong>${emp.name}</strong> (${emp.emp_no}) - ${emp.department_name || '-'} · ${emp.position_name || '-'}<br><small class="small-muted">${year}년 부여연차를 수정합니다.</small>`;
             document.getElementById('aleGranted').value = emp.granted;
             document.getElementById('annualLeaveEditModal').classList.remove('hidden');
         }
@@ -1043,14 +1046,14 @@ const data = {
                 const res = await api.certificate.list();
                 renderCertificates(res.data || []);
             } catch (err) {
-                document.getElementById('certificateList').innerHTML = '<tr><td colspan="11" style="text-align:center;color:#dc2626;">불러오기 실패</td></tr>';
+                document.getElementById('certificateList').innerHTML = '<tr><td colspan="11" class="error-message">불러오기 실패</td></tr>';
             }
         }
 
         function renderCertificates(list) {
             const tbody = document.getElementById('certificateList');
             if (!list.length) {
-                tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;">요청 내역이 없습니다.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="11" class="empty-message">요청 내역이 없습니다.</td></tr>';
                 return;
             }
             tbody.innerHTML = list.map(r => `
@@ -1102,14 +1105,14 @@ const data = {
                 const res = await api.support.list();
                 renderSupportList(res.data || []);
             } catch (err) {
-                document.getElementById('supportList').innerHTML = '<tr><td colspan="8" style="text-align:center;color:#dc2626;">불러오기 실패</td></tr>';
+                document.getElementById('supportList').innerHTML = '<tr><td colspan="8" class="error-message">불러오기 실패</td></tr>';
             }
         }
 
         function renderSupportList(list) {
             const tbody = document.getElementById('supportList');
             if (!list.length) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">요청 내역이 없습니다.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8" class="empty-message">요청 내역이 없습니다.</td></tr>';
                 return;
             }
             tbody.innerHTML = list.map(r => `
@@ -1117,10 +1120,10 @@ const data = {
                     <td>${r.name} (${r.emp_no})</td>
                     <td>${r.department_name || '-'}</td>
                     <td>${r.request_type_label}</td>
-                    <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeHtml(r.content || '')}">${r.content || '-'}</td>
+                    <td class="td-ellipsis" title="${escapeHtml(r.content || '')}">${r.content || '-'}</td>
                     <td>${r.created_at}</td>
                     <td><span class="status-badge status-${r.status === 'requested' ? 'applied' : 'approved'}">${r.status_label}</span></td>
-                    <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeHtml(r.notes || '')}">${r.notes || '-'}</td>
+                    <td class="td-ellipsis" title="${escapeHtml(r.notes || '')}">${r.notes || '-'}</td>
                     <td>
                         ${r.status === 'requested'
                             ? `<button class="btn btn-sm btn-primary" data-action="openSupportCompleteModal" data-id="${r.id}">완료</button>`
@@ -1204,7 +1207,7 @@ const data = {
                 } else {
                     let msg = res.error || '알 수 없는 오류';
                     if (res.debug) {
-                        msg += '<br><br><strong>SMTP 디버그 로그:</strong><br><pre style="background:#f5f5f5;padding:10px;border-radius:4px;font-size:12px;max-height:300px;overflow:auto;white-space:pre-wrap;word-break:break-all;margin-top:8px;">' + escapeHtml(res.debug) + '</pre>';
+                        msg += '<br><br><strong>SMTP 디버그 로그:</strong><br><pre class="pre-debug">' + escapeHtml(res.debug) + '</pre>';
                     }
                     resultEl.innerHTML = '❌ ' + msg;
                     resultEl.style.color = '#dc2626';

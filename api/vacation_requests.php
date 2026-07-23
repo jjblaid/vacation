@@ -836,7 +836,7 @@ function cancelRequest() {
         return;
     }
     
-    if ($request['employee_id'] != $user['id'] && !in_array($user['role'], ['system_admin', 'reviewer'])) {
+    if ($user['role'] === 'reviewer' || ($request['employee_id'] != $user['id'] && !in_array($user['role'], ['system_admin']))) {
         http_response_code(403);
         echo json_encode(['error' => '취소 권한이 없습니다.']);
         return;
@@ -894,7 +894,7 @@ function approveRequest() {
     $user = $_SESSION['user'];
     $id = intval($_PARSED_BODY['id'] ?? $_GET['id'] ?? $_POST['id'] ?? 0);
     
-    if (!in_array($user['role'], ['system_admin', 'reviewer'])) {
+    if (!in_array($user['role'], ['system_admin'])) {
         http_response_code(403);
         echo json_encode(['error' => '권한이 없습니다.']);
         return;

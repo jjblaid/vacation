@@ -52,6 +52,17 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet" integrity="sha384-39yVKLsD9lMelmY+ij49KZgE+Mfk6hjdUPNE8yKHqdMPceLXzhlCJAK81xlD5jDjday" crossorigin="anonymous">
     <link href="css/styles.css" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" integrity="sha512-8o9GL4vAqkQv5ASESaPGM9ynmyrOu6tsrukDDRwRnsbC0d2xlN35dCr6S9W37/4HbKhIEVCvfCtBZSrl4hA6bQ==" crossorigin="anonymous">
+    <style nonce="<?= $cspNonce ?>">
+        .history-box { margin-top:20px; }
+        .history-title { margin-bottom:10px; }
+        .sm-input { padding:8px 12px; border-radius:8px; border:1px solid #e2e8f0; }
+        .modal-textarea { width:100%; padding:10px; border:1px solid #ddd; border-radius:6px; }
+        .result-line { margin-top:10px; font-weight:600; }
+        .pw-verify-text { margin-bottom:12px; font-size:14px; color:#555; }
+        .pw-error { color:#dc2626; font-size:13px; margin-top:8px; }
+        .toggle-btn { cursor:pointer; font-size:20px; padding:0 6px; border:none; background:none; user-select:none; }
+        .pw-overlay { z-index:1100; }
+    </style>
     <script nonce="<?= $cspNonce ?>">
         const roleNames = {"system_admin":"시스템관리자","reviewer":"검토자","dept_manager":"관리자","ceo":"대표이사","vice_president":"부대표","user":"사용자"};
     </script>
@@ -151,8 +162,8 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
                     <tbody id="resignedList"></tbody>
                 </table>
             </div>
-            <div id="resignedVacationHistory" style="margin-top: 20px; display: none;">
-                <h3 id="resignedEmployeeName" style="margin-bottom: 10px;"></h3>
+            <div id="resignedVacationHistory" class="history-box hidden">
+                <h3 id="resignedEmployeeName" class="history-title"></h3>
                 <div class="table-wrapper">
                     <table>
                         <thead>
@@ -197,8 +208,8 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
                     <tbody id="resigningList"></tbody>
                 </table>
             </div>
-            <div id="resigningVacationHistory" style="margin-top:20px; display:none;">
-                <h3 id="resigningEmployeeName" style="margin-bottom:10px;"></h3>
+            <div id="resigningVacationHistory" class="history-box hidden">
+                <h3 id="resigningEmployeeName" class="history-title"></h3>
                 <div class="table-wrapper">
                     <table>
                         <thead>
@@ -354,7 +365,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
             <div class="section">
                 <div class="section-header">
                     <h2 class="section-title">공휴일 관리</h2>
-                    <div style="display: flex; gap: 10px; align-items: center;">
+                    <div class="flex-row gap-10 items-center">
                         <select id="holidayYear"></select>
                         <button class="btn btn-primary" id="btnAddHoliday">+ 공휴일 추가</button>
                     </div>
@@ -413,7 +424,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
                 <div class="modal-body">
                     <input type="hidden" id="aleEmployeeId">
                     <input type="hidden" id="aleYear">
-                    <p id="aleEmployeeInfo" style="margin-bottom:16px;"></p>
+                    <p id="aleEmployeeInfo" class="mb-16"></p>
                     <div class="form-group">
                         <label>부여 연차</label>
                         <input type="number" id="aleGranted" step="0.5" required>
@@ -431,8 +442,8 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
             <div class="section">
                 <div class="section-header">
                     <h2 class="section-title">📅 연도별 연차 관리</h2>
-                    <div style="display:flex;gap:10px;align-items:center;">
-                        <select id="annualYearSelect" style="padding:8px 12px;border-radius:8px;border:1px solid #e2e8f0;">
+                    <div class="flex-row gap-10 items-center">
+                        <select id="annualYearSelect" class="sm-input">
                         </select>
                     </div>
                 </div>
@@ -550,7 +561,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
 
 <!-- Complete Support Modal -->
 <div id="supportCompleteModal" class="modal-overlay hidden">
-    <div class="modal" style="max-width:450px;">
+    <div class="modal modal-sm">
         <div class="modal-header">
             <h3 class="modal-title" id="supportCompleteTitle">행정지원 요청 처리</h3>
             <button class="modal-close" id="btnCloseSupportComplete">&times;</button>
@@ -560,7 +571,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
             <input type="hidden" id="supportCompleteStatus" value="completed">
             <div class="form-group">
                 <label>비고</label>
-                <textarea id="supportCompleteNotes" rows="4" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px;" placeholder="처리 결과, 전달일 등 비고사항"></textarea>
+                <textarea id="supportCompleteNotes" rows="4" class="modal-textarea" placeholder="처리 결과, 전달일 등 비고사항"></textarea>
             </div>
         </div>
         <div class="modal-footer">
@@ -572,7 +583,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
 
 <!-- Complete Certificate Modal -->
 <div id="certCompleteModal" class="modal-overlay hidden">
-    <div class="modal" style="max-width:450px;">
+    <div class="modal modal-sm">
         <div class="modal-header">
             <h3 class="modal-title">증명서 발급 완료</h3>
             <button class="modal-close" id="btnCloseCertComplete">&times;</button>
@@ -581,7 +592,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
             <input type="hidden" id="certCompleteId">
             <div class="form-group">
                 <label>비고</label>
-                <textarea id="certCompleteNotes" rows="4" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px;" placeholder="발급 방식, 전달일 등 비고사항"></textarea>
+                <textarea id="certCompleteNotes" rows="4" class="modal-textarea" placeholder="발급 방식, 전달일 등 비고사항"></textarea>
             </div>
         </div>
         <div class="modal-footer">
@@ -600,23 +611,23 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
         <div class="section-body">
             <div class="form-group">
                 <label>SMTP 호스트</label>
-                <input type="text" id="smtpHost" maxlength="200" placeholder="smtp.gmail.com" style="width:100%;">
+                <input type="text" id="smtpHost" maxlength="200" placeholder="smtp.gmail.com">
             </div>
             <div class="form-group">
                 <label>SMTP 포트</label>
-                <input type="text" id="smtpPort" maxlength="10" placeholder="587" style="width:200px;">
+                <input type="text" id="smtpPort" maxlength="10" placeholder="587" class="w-200">
             </div>
             <div class="form-group">
                 <label>계정</label>
-                <input type="text" id="smtpUser" maxlength="200" placeholder="user@gmail.com" style="width:100%;">
+                <input type="text" id="smtpUser" maxlength="200" placeholder="user@gmail.com">
             </div>
             <div class="form-group">
                 <label>암호</label>
-                <input type="password" id="smtpPass" maxlength="200" style="width:100%;">
+                <input type="password" id="smtpPass" maxlength="200">
             </div>
             <div class="form-group">
                 <label>암호화 방식</label>
-                <select id="smtpEncryption" style="width:200px;">
+                <select id="smtpEncryption" class="w-200">
                     <option value="tls">TLS</option>
                     <option value="ssl">SSL</option>
                     <option value="">없음</option>
@@ -624,35 +635,35 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
             </div>
             <div class="form-group">
                 <label>발신 이메일</label>
-                <input type="email" id="smtpFromEmail" maxlength="200" placeholder="noreply@example.com" style="width:100%;">
+                <input type="email" id="smtpFromEmail" maxlength="200" placeholder="noreply@example.com">
             </div>
             <div class="form-group">
                 <label class="checkbox-label"> SMTP 인증 사용 <input type="checkbox" id="smtpAuth" value="1"> </label>
             </div>
-            <div style="display:flex; gap:10px; margin-top:20px;">
+            <div class="flex-row gap-10 mt-20">
                 <button class="btn btn-primary" id="btnSaveSmtp">저장</button>
                 <button class="btn btn-secondary" id="btnTestSmtp">테스트 발송</button>
             </div>
-            <div id="smtpResult" style="margin-top:10px; font-weight:600;"></div>
+            <div id="smtpResult" class="result-line"></div>
         </div>
     </div>
 </div>
     </main>
 
     <!-- Password Verify Modal -->
-    <div id="passwordVerifyModal" class="modal-overlay hidden" style="z-index:1100;">
-        <div class="modal" style="max-width:380px;">
+    <div id="passwordVerifyModal" class="modal-overlay hidden pw-overlay">
+        <div class="modal modal-w-380">
             <div class="modal-header">
                 <h3 class="modal-title">비밀번호 확인</h3>
                 <button class="modal-close" id="btnClosePwVerify">&times;</button>
             </div>
             <div class="modal-body">
-                <p style="margin-bottom:12px; font-size:14px; color:#555;">주민등록번호를 보려면 비밀번호를 입력하세요.</p>
-                <div style="display:flex; gap:6px; align-items:center;">
-                    <input type="password" id="pwVerifyInput" maxlength="100" placeholder="비밀번호 입력" style="flex:1; padding:10px; border:1px solid #ddd; border-radius:6px; font-size:14px;" onkeydown="if(event.key==='Enter') confirmPasswordVerify()">
-                    <span id="pwVerifyToggle" style="cursor:pointer; font-size:20px; user-select:none;">👁️</span>
+                <p class="pw-verify-text">주민등록번호를 보려면 비밀번호를 입력하세요.</p>
+                <div class="flex-row gap-6 items-center">
+                    <input type="password" id="pwVerifyInput" maxlength="100" placeholder="비밀번호 입력" class="flex-1 w-full-input text-sm-14">
+                    <span id="pwVerifyToggle" class="toggle-btn">👁️</span>
                 </div>
-                <div id="pwVerifyError" style="color:#dc2626; font-size:13px; margin-top:8px; display:none;"></div>
+                <div id="pwVerifyError" class="pw-error hidden"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" id="btnCancelPwVerify">취소</button>
@@ -726,9 +737,9 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
                     </div>
                     <div class="form-group">
                         <label>주민등록번호</label>
-                        <div style="display:flex; gap:6px; align-items:center;">
-                            <input type="password" id="empResidentNo" maxlength="14" placeholder="********" readonly style="flex:1;" data-original="">
-                            <button type="button" id="residentNoToggle" class="btn-toggle" style="cursor:pointer; font-size:20px; padding:0 6px; border:none; background:none;">🔒</button>
+                        <div class="flex-row gap-6 items-center">
+                            <input type="password" id="empResidentNo" maxlength="14" placeholder="********" readonly class="flex-1" data-original="">
+                            <button type="button" id="residentNoToggle" class="btn-toggle toggle-btn">🔒</button>
                         </div>
                     </div>
                     <div class="form-group">
@@ -738,14 +749,14 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
                     <div class="form-group">
                         <label class="checkbox-label"><input type="checkbox" id="empIsActive"> 퇴직처리</label>
                     </div>
-<div class="form-group" id="empResignDate" style="display:none;">
+<div class="form-group hidden" id="empResignDate">
     <label>퇴직일</label>
     <input type="date" id="empResignationDate">
 </div>
-<div class="form-group" id="empResignGroup" style="display:none;">
+<div class="form-group hidden" id="empResignGroup">
     <label class="checkbox-label"><input type="checkbox" id="empIsResigning"> 퇴사예정자</label>
 </div>
-<div class="form-group" id="empSeveranceGroup" style="display:none;">
+<div class="form-group hidden" id="empSeveranceGroup">
     <label>보전연차 (일)</label>
     <input type="number" id="empSeveranceLeave" step="0.5" min="0" value="0">
 </div>

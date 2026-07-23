@@ -32,7 +32,7 @@ $today = date('Y년  m월  d일');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>사직서</title>
-    <style>
+    <style nonce="<?= $cspNonce ?>">
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -117,6 +117,14 @@ $today = date('Y년  m월  d일');
         .main-table td.center { text-align: center; }
 
         .reason-cell { min-height: 120px; padding: 10px 12px; }
+        .main-table tr { height: 65px; }
+        .main-table tr.h-150 { height: 150px; }
+        .main-table tr.h-90 { height: 90px; }
+        .main-table th { width: 22%; }
+        .main-table td { width: 28%; }
+        .signature-memo { color:#EAEAEA; font-size:7pt; }
+        .signature-label { color:#aaa; }
+        .recipient-line { text-align:right; font-size:12pt; margin-top:10mm; }
 
         .footer-text {
             text-align: center;
@@ -129,6 +137,12 @@ $today = date('Y년  m월  d일');
         .sign-area .date-line       { font-size: 12pt; margin-bottom: 10mm; letter-spacing: 2px; }
         .sign-area .applicant-line  { font-size: 13pt; }
 
+        .toolbar { text-align:center; padding:12px; background:#fff; border-bottom:1px solid #ddd; }
+        .toolbar-inner { max-width:600px; margin:0 auto; }
+        .toolbar-textarea { width:100%; padding:10px; font-size:14px; font-family:'Noto Sans KR',sans-serif; border:1px solid #ccc; border-radius:4px; resize:vertical; margin-bottom:10px; }
+        .btn-print { padding:8px 28px; font-size:14px; background:#222; color:#fff; border:none; cursor:pointer; border-radius:3px; font-family:'Noto Sans KR',sans-serif; }
+        .btn-close { margin-left:10px; padding:8px 20px; font-size:14px; background:#fff; color:#444; border:1px solid #aaa; cursor:pointer; border-radius:3px; font-family:'Noto Sans KR',sans-serif; }
+
         @media print {
             body  { background: #fff; }
             .page { margin: 0; box-shadow: none; padding: 15mm 16mm; }
@@ -138,25 +152,14 @@ $today = date('Y년  m월  d일');
 </head>
 <body>
 
-<div class="no-print" style="text-align:center; padding:12px; background:#fff; border-bottom:1px solid #ddd;">
-    <div style="max-width:600px; margin:0 auto;">
+<div class="no-print toolbar">
+    <div class="toolbar-inner">
         <textarea id="reasonInput" rows="4"
             placeholder="퇴사 사유를 입력해주세요"
-            style="width:100%; padding:10px; font-size:14px; font-family:'Noto Sans KR',sans-serif;
-                   border:1px solid #ccc; border-radius:4px; resize:vertical; margin-bottom:10px;"></textarea>
+            class="toolbar-textarea"></textarea>
         <div>
-            <button id="btnPrintResign"
-                style="padding:8px 28px; font-size:14px; background:#222; color:#fff;
-                       border:none; cursor:pointer; border-radius:3px;
-                       font-family:'Noto Sans KR',sans-serif;">
-                🖨 인쇄
-            </button>
-            <button id="btnCloseResign"
-                style="margin-left:10px; padding:8px 20px; font-size:14px; background:#fff;
-                       color:#444; border:1px solid #aaa; cursor:pointer; border-radius:3px;
-                       font-family:'Noto Sans KR',sans-serif;">
-                ✕ 닫기
-            </button>
+            <button id="btnPrintResign" class="btn-print">🖨 인쇄</button>
+            <button id="btnCloseResign" class="btn-close">✕ 닫기</button>
         </div>
     </div>
 </div>
@@ -196,36 +199,36 @@ $today = date('Y년  m월  d일');
     </table>-->
 	<p>
     <table class="main-table">
-        <tr style="height:65px">
-            <th style="width:22%">소&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;속</th>
-            <td style="width:28%"><?= htmlspecialchars($emp['department_name'] ?? '') ?></td>
-            <th style="width:22%">직&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;위</th>
-            <td style="width:28%"><?= htmlspecialchars($emp['position_name'] ?? '') ?></td>
+        <tr>
+            <th>소&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;속</th>
+            <td><?= htmlspecialchars($emp['department_name'] ?? '') ?></td>
+            <th>직&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;위</th>
+            <td><?= htmlspecialchars($emp['position_name'] ?? '') ?></td>
         </tr>
-        <tr style="height:65px">
+        <tr>
             <th>성&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;명</th>
             <td><?= htmlspecialchars($emp['name'] ?? '') ?></td>
             <th>생&nbsp;년&nbsp;월&nbsp;일</th>
             <td><?= htmlspecialchars($emp['birth_date'] ?? '') ?></td>
         </tr>
-        <tr style="height:65px">
+        <tr>
             <th>입&nbsp;사&nbsp;년&nbsp;월&nbsp;일</th>
             <td><?= htmlspecialchars($emp['hire_date'] ?? '') ?></td>
             <th>연&nbsp;락&nbsp;처</th>
             <td><?= htmlspecialchars($emp['phone1'] ?? ($emp['phone2'] ?? '')) ?></td>
         </tr>
-        <tr style="height:65px">
+        <tr>
             <th>퇴사&nbsp;예정일</th>
             <td colspan="3"><?= htmlspecialchars($resignDate) ?></td>
         </tr>
-        <tr style="height:150px">
-            <th align="center" style="vertical-align:middle; padding-top:12px;">퇴&nbsp;사&nbsp;사&nbsp;유</th>
-            <td colspan="3" class="reason-cell" style="min-height:120px;">
+        <tr class="h-150">
+            <th>퇴&nbsp;사&nbsp;사&nbsp;유</th>
+            <td colspan="3" class="reason-cell">
                 <span id="printReason"></span>
             </td>
         </tr>
-        <tr style="height:90px">
-            <th>메&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;모<br><span style="color:#EAEAEA; font-size:7pt;">(수기 작성 공간)</span></th>
+        <tr class="h-90">
+            <th>메&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;모<br><span class="signature-memo">(수기 작성 공간)</span></th>
             <td colspan="3"></td>
         </tr>
     </table>
@@ -239,11 +242,11 @@ $today = date('Y년  m월  d일');
         <div class="applicant-line">
             제출자&nbsp;&nbsp;&nbsp;
             <?= htmlspecialchars($emp['name'] ?? '') ?>
-            &nbsp;&nbsp;&nbsp;<span style="color:#aaa;">(서명)</span>
+            &nbsp;&nbsp;&nbsp;<span class="signature-label">(서명)</span>
         </div>
     </div>
 
-    <div style="text-align:right; font-size:12pt; margin-top:10mm;">
+    <div class="recipient-line">
         대표이사 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 귀하
     </div>
 

@@ -3,7 +3,7 @@ session_start();
 
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'system_admin') {
     http_response_code(403);
-    echo '<!DOCTYPE html><html><head><meta charset="utf-8"><title>접근 불가</title></head><body style="font-family:sans-serif;text-align:center;padding:80px;"><h1>403 Forbidden</h1><p>권한이 없습니다.</p><a href="index.php">로그인 페이지로 이동</a></body></html>';
+    echo '<!DOCTYPE html><html><head><meta charset="utf-8"><title>접근 불가</title></head><body><h1>403 Forbidden</h1><p>권한이 없습니다.</p><a href="index.php">로그인 페이지로 이동</a></body></html>';
     exit;
 }
 
@@ -47,7 +47,7 @@ function selected($a, $b) { return $a == $b ? 'selected' : ''; }
 <?php endif; ?>
     <title><?= $isActiveView ? '현재 접속자' : '접속 이력' ?></title>
     <link rel="stylesheet" href="css/styles.css">
-    <style>
+    <style nonce="<?= $cspNonce ?>">
         body { background: #f1f5f9; padding: 32px; }
         .container { max-width: 1100px; margin: 0 auto; }
         .count { font-size: 14px; color: #64748b; }
@@ -62,13 +62,20 @@ function selected($a, $b) { return $a == $b ? 'selected' : ''; }
         .tabs a.active { color: #1e293b; background: #fff; }
         .tabs a:hover:not(.active) { background: #cbd5e1; }
         .status-logout { background: #fee2e2; color: #dc2626; }
+        .section-header-center { padding-bottom:0; border-bottom:none; flex-direction:column; align-items:stretch; }
+        .header-flex { display:flex; align-items:center; justify-content:space-between; padding:0 24px 16px; }
+        .tabs-pad { padding:0 24px; }
+        .filter-form { display:flex; gap:6px; margin-left:auto; }
+        .filter-select { padding:6px 10px; border-radius:6px; border:1px solid #e2e8f0; font-size:13px; }
+        .empty-cell { text-align:center; color:#94a3b8; }
+        .count-mt { margin-top:16px; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="section">
-            <div class="section-header" style="padding-bottom:0;border-bottom:none;flex-direction:column;align-items:stretch;">
-                <div style="display:flex;align-items:center;justify-content:space-between;padding:0 24px 16px;">
+            <div class="section-header section-header-center">
+                <div class="header-flex">
                     <div class="header-info">
                         <h2 class="section-title"><?= $isActiveView ? '🟢 현재 접속자' : '📋 접속 이력' ?></h2>
                         <span class="count">총 <em><?= count($sessions) ?></em>건</span>
@@ -80,18 +87,18 @@ function selected($a, $b) { return $a == $b ? 'selected' : ''; }
                         <button id="btnRefresh" class="btn btn-sm btn-secondary">🔄 새로고침</button>
                     </div>
                 </div>
-                <div class="tabs" style="padding:0 24px;">
+                <div class="tabs tabs-pad">
                     <a href="login_status.php" class="<?= $isActiveView ? 'active' : '' ?>">🟢 현재 접속자</a>
                     <a href="login_status.php?view=all" class="<?= !$isActiveView ? 'active' : '' ?>">📋 전체 이력</a>
 <?php if (!$isActiveView): ?>
-                    <form method="get" action="login_status.php" style="display:flex;gap:6px;margin-left:auto;">
+                    <form method="get" action="login_status.php" class="filter-form">
                         <input type="hidden" name="view" value="all">
-                        <select id="filterYear" name="year" style="padding:6px 10px;border-radius:6px;border:1px solid #e2e8f0;font-size:13px;">
+                        <select id="filterYear" name="year" class="filter-select">
 <?php for ($y = intval(date('Y')); $y >= intval(date('Y')) - 5; $y--): ?>
                             <option value="<?= $y ?>" <?= selected($y, $year) ?>><?= $y ?>년</option>
 <?php endfor; ?>
                         </select>
-                        <select id="filterMonth" name="month" style="padding:6px 10px;border-radius:6px;border:1px solid #e2e8f0;font-size:13px;">
+                        <select id="filterMonth" name="month" class="filter-select">
 <?php for ($m = 1; $m <= 12; $m++): ?>
                             <option value="<?= $m ?>" <?= selected($m, $month) ?>><?= $m ?>월</option>
 <?php endfor; ?>
@@ -119,7 +126,7 @@ function selected($a, $b) { return $a == $b ? 'selected' : ''; }
                         </thead>
                         <tbody>
 <?php if (count($sessions) === 0): ?>
-                            <tr><td colspan="<?= $isActiveView ? 6 : 8 ?>" style="text-align:center;color:#94a3b8;"><?= $isActiveView ? '접속 중인 사용자가 없습니다.' : "{$year}년 {$month}월 접속 기록이 없습니다." ?></td></tr>
+                            <tr><td colspan="<?= $isActiveView ? 6 : 8 ?>" class="empty-cell"><?= $isActiveView ? '접속 중인 사용자가 없습니다.' : "{$year}년 {$month}월 접속 기록이 없습니다." ?></td></tr>
 <?php else: ?>
 <?php foreach ($sessions as $s): ?>
 <?php $isLoggedOut = $s['logout_at'] !== null; ?>
@@ -141,9 +148,9 @@ function selected($a, $b) { return $a == $b ? 'selected' : ''; }
                     </table>
                 </div>
 <?php if ($isActiveView): ?>
-                <p class="count" style="margin-top:16px;">※ 30분 이상 활동이 없거나 로그아웃한 사용자는 자동으로 목록에서 제외됩니다.</p>
+                <p class="count count-mt">※ 30분 이상 활동이 없거나 로그아웃한 사용자는 자동으로 목록에서 제외됩니다.</p>
 <?php else: ?>
-                <p class="count" style="margin-top:16px;">※ <strong><?= $year ?>년 <?= $month ?>월</strong>의 모든 로그인/로그아웃 기록을 표시합니다. 연도/월을 선택하여 다른 기간을 조회할 수 있습니다.</p>
+                <p class="count count-mt">※ <strong><?= $year ?>년 <?= $month ?>월</strong>의 모든 로그인/로그아웃 기록을 표시합니다. 연도/월을 선택하여 다른 기간을 조회할 수 있습니다.</p>
 <?php endif; ?>
             </div>
         </div>

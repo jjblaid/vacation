@@ -685,6 +685,46 @@ tr:hover {
     }
 }
 
+/* Utility classes */
+.w-100 { width:100%; }
+.w-200 { width:200px; }
+.flex-1 { flex:1; }
+.flex-row { display:flex; }
+.flex-col { flex-direction:column; }
+.flex-wrap { flex-wrap:wrap; }
+.items-center { align-items:center; }
+.justify-between { justify-content:space-between; }
+.gap-6 { gap:6px; }
+.gap-10 { gap:10px; }
+.gap-12 { gap:12px; }
+.mt-8 { margin-top:8px; }
+.mt-10 { margin-top:10px; }
+.mt-16 { margin-top:16px; }
+.mt-20 { margin-top:20px; }
+.mb-8 { margin-bottom:8px; }
+.mb-10 { margin-bottom:10px; }
+.mb-12 { margin-bottom:12px; }
+.mb-16 { margin-bottom:16px; }
+.p-10 { padding:10px; }
+.px-10 { padding-left:10px; padding-right:10px; }
+.py-12 { padding-top:12px; padding-bottom:12px; }
+.cursor-pointer { cursor:pointer; }
+.font-20 { font-size:20px; }
+.user-select-none { user-select:none; }
+.border-none { border:none; }
+.bg-none { background:none; }
+.text-sm { font-size:13px; }
+.text-sm-14 { font-size:14px; }
+.text-danger { color:#dc2626; }
+.text-muted { color:var(--text-muted); }
+.d-none { display:none; }
+.d-block { display:block; }
+.w-full-input { width:100%; padding:10px; border:1px solid #ddd; border-radius:6px; }
+.mt-auto { margin-left:auto; }
+.select-rounded { padding:8px 12px; border-radius:8px; border:1px solid #e2e8f0; }
+.modal-sm { max-width:450px; }
+.modal-w-380 { max-width:380px; }
+
 /* Actions */
 .actions {
     display: flex;
@@ -818,3 +858,21 @@ tr:hover {
 .fc-daygrid-day-top {
     position: relative;
 }
+
+/* JS template utility classes */
+.td-center { text-align:center; }
+.td-left { text-align:left; }
+.td-muted { color:#64748b; font-size:13px; }
+.td-nowrap { white-space:nowrap; }
+.td-ellipsis { max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.error-message { text-align:center; color:#dc2626; }
+.error-message-red { text-align:center; color:red; }
+.empty-message { text-align:center; }
+.pre-debug { background:#f5f5f5; padding:10px; border-radius:4px; font-size:12px; max-height:300px; overflow:auto; white-space:pre-wrap; word-break:break-all; margin-top:8px; }
+.small-muted { color:#64748b; font-size:13px; }
+.remaining-negative { color:#dc2626; font-weight:700; }
+.remaining-low { color:#f59e0b; font-weight:600; }
+.remaining-ok { color:#16a34a; }
+.calendar-list { list-style:none; padding:0; }
+.calendar-item { padding:8px; border-bottom:1px solid #eee; }
+.flex-btn-row { display:flex; justify-content:center; gap:8px; margin-top:16px; }

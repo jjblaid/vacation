@@ -58,7 +58,7 @@ function halfLabel($halfDb, $vacationType) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>휴가 신청서</title>
-    <style>
+    <style nonce="<?= $cspNonce ?>">
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -146,6 +146,20 @@ function halfLabel($halfDb, $vacationType) {
         .sign-area .date-line { font-size: 12pt; margin-bottom: 10mm; letter-spacing: 2px; }
         .sign-area .applicant-line { font-size: 14pt; }
 
+        .toolbar { text-align:center; padding:12px; background:#fff; border-bottom:1px solid #ddd; }
+        .btn-print { padding:8px 28px; font-size:14px; background:#222; color:#fff; border:none; cursor:pointer; border-radius:3px; font-family:'Noto Sans KR',sans-serif; }
+        .btn-close { margin-left:10px; padding:8px 20px; font-size:14px; background:#fff; color:#444; border:1px solid #aaa; cursor:pointer; border-radius:3px; font-family:'Noto Sans KR',sans-serif; }
+        .main-table tr { height: 65px; }
+        .main-table tr.h-70 { height: 70px; }
+        .main-table th { width: 25%; }
+        .main-table td { width: 25%; }
+        .phone-row { display:flex; align-items:center; }
+        .phone-num { width:30px; flex-shrink:0; }
+        .phone-val { flex:1; text-align:center; }
+        .vtype-cell { text-align:left; padding:10px 14px; }
+        .memo-td { height:40px; }
+        .memo-label { color:#EAEAEA; font-size:7pt; }
+        .signature-label { color:#aaa; }
 
         @media print {
             body { background: #fff; }
@@ -156,13 +170,9 @@ function halfLabel($halfDb, $vacationType) {
 </head>
 <body>
 
-<div class="no-print" style="text-align:center; padding:12px; background:#fff; border-bottom:1px solid #ddd;">
-    <button id="btnPrint" style="padding:8px 28px; font-size:14px; background:#222; color:#fff; border:none; cursor:pointer; border-radius:3px; font-family:'Noto Sans KR',sans-serif;">
-        🖨 인쇄
-    </button>
-    <button id="btnClose" style="margin-left:10px; padding:8px 20px; font-size:14px; background:#fff; color:#444; border:1px solid #aaa; cursor:pointer; border-radius:3px; font-family:'Noto Sans KR',sans-serif;">
-        ✕ 닫기
-    </button>
+<div class="no-print toolbar">
+    <button id="btnPrint" class="btn-print">🖨 인쇄</button>
+    <button id="btnClose" class="btn-close">✕ 닫기</button>
 </div>
 <script nonce="<?= $cspNonce ?>">
 document.getElementById('btnPrint').addEventListener('click', () => window.print());
@@ -203,26 +213,26 @@ document.getElementById('btnClose').addEventListener('click', () => window.close
 
     <!-- 본문 테이블 -->
     <table class="main-table">
-        <tr style="height:65px">
-            <th style="width:25%" >소&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;속</th>
-            <td style="width:25%"><?= htmlspecialchars($request['department_name'] ?? '') ?></td>
-            <th style="width:25%">직&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;급</th>
-            <td style="width:25%"><?= htmlspecialchars($request['position_name'] ?? '') ?></td>
+        <tr>
+            <th>소&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;속</th>
+            <td><?= htmlspecialchars($request['department_name'] ?? '') ?></td>
+            <th>직&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;급</th>
+            <td><?= htmlspecialchars($request['position_name'] ?? '') ?></td>
         </tr>
-        <tr style="height:70px">
+        <tr class="h-70">
             <th>이&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;름</th>
             <td><?= htmlspecialchars($request['name'] ?? '') ?></td>
             <th>긴급연락처</th>
             <td>
-                <div style="display:flex;align-items:center;">
-                    <span style="width:30px;flex-shrink:0;">1</span>
-                    <span style="flex:1;text-align:center;">
+                <div class="phone-row">
+                    <span class="phone-num">1</span>
+                    <span class="phone-val">
                         <?= !empty($request['phone1']) ? htmlspecialchars($request['phone1']) : '-' ?>
                     </span>
                 </div>
-                <div style="display:flex;align-items:center;">
-                    <span style="width:30px;flex-shrink:0;">2</span>
-                    <span style="flex:1;text-align:center;">
+                <div class="phone-row">
+                    <span class="phone-num">2</span>
+                    <span class="phone-val">
                         <?= !empty($request['phone2']) ? htmlspecialchars($request['phone2']) : '-' ?>
                     </span>
                 </div>
@@ -230,7 +240,7 @@ document.getElementById('btnClose').addEventListener('click', () => window.close
         </tr>
         <tr>
             <th>휴가 구분</th>
-            <td colspan="3" style="text-align:left; padding:10px 14px;">
+            <td colspan="3" class="vtype-cell">
                 <div class="vtype-line">
                     <?= chk($isHanchaAM) ?> <span class="lbl">1. 반차(오전)</span>
                     &nbsp;&nbsp;&nbsp;&nbsp;
@@ -245,7 +255,7 @@ document.getElementById('btnClose').addEventListener('click', () => window.close
                 </div>
             </td>
         </tr>
-        <tr style="height:65px">
+        <tr>
             <th>휴가 기간</th>
             <td colspan="3">
                 <?php
@@ -255,17 +265,17 @@ document.getElementById('btnClose').addEventListener('click', () => window.close
                 ?>
             </td>
         </tr>
-        <tr style="height:65px">
+        <tr>
             <th>휴가 일수</th>
             <td colspan="3"><?= htmlspecialchars($request['days'] ?? '') ?> 일</td>
         </tr>
-        <tr style="height:65px">
+        <tr>
             <th>휴가 사유</th>
             <td colspan="3"><?= htmlspecialchars($request['reason'] ?? '') ?></td>
         </tr>
-        <tr style="height:65px">
-            <th>메모<br><span style="color:#EAEAEA; font-size:7pt;">(수기 작성 공간)</span></th>
-            <td colspan="3" style="height:40px;"></td>
+        <tr>
+            <th>메모<br><span class="memo-label">(수기 작성 공간)</span></th>
+            <td colspan="3" class="memo-td"></td>
         </tr>
     </table>
     <div class="footer-text"><p><p>위와 같이 휴가를 신청하오니 허가하여 주시기 바랍니다.</div>
@@ -275,7 +285,7 @@ document.getElementById('btnClose').addEventListener('click', () => window.close
         <div class="applicant-line">
             신청인&nbsp;&nbsp;&nbsp;
             <?= htmlspecialchars($request['name'] ?? '') ?>
-            &nbsp;&nbsp;&nbsp;<span style="fontcolor:litegray">(서명)</span>
+            &nbsp;&nbsp;&nbsp;<span class="signature-label">(서명)</span>
         </div>
     </div>
 

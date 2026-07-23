@@ -14,8 +14,31 @@ require_once __DIR__ . '/config/security.php';
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@5.11.3/main.css" integrity="sha512-rgfj1WV7y50DvxkdcIZPOLcoyREL8P3CAbV6JGxJsyDmPbfzMRPfRSfaPWun1WNL2fkPrKnT7H7qXF6UM/YKDg==" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@5.11.3/main.css" integrity="sha512-Gt5XUNqI9B+QsiFDBaDZoq72tDNK2kRoSO/4yNBx2ConympFwhkyY6BFE0A8nDTrVQtKUnYUQFbNfzzWjlhiRg==" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/list@5.11.3/main.css" integrity="sha512-msmq2tDcCDOACHca2zLo+dYqr5LpR0HuJaZ0k3c2SZXKx1UV2/zisALRYnTgKwTmQ4tWXiWWOELirHhE2dO69w==" crossorigin="anonymous">
-	<link href="css/styles.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" integrity="sha512-8o9GL4vAqkQv5ASESaPGM9ynmyrOu6tsrukDDRwRnsbC0d2xlN35dCr6S9W37/4HbKhIEVCvfCtBZSrl4hA6bQ==" crossorigin="anonymous">
+    <style nonce="<?= $cspNonce ?>">
+        .year-label { font-size:14px; font-weight:400; }
+        .legend-box { display:flex; align-items:center; gap:6px; }
+        .legend-swatch { width:12px; height:12px; border-radius:2px; }
+        .swatch-family { background-color:#dcfce7; border:1px solid #166534; }
+        .swatch-holiday { background-color:#fee2e2; border:1px solid #dc2626; }
+        .flex-bar { display:flex; gap:10px; }
+        .flex-bar-8 { display:flex; gap:8px; }
+        .filter-select-sm { padding:8px 12px; border-radius:8px; border:1px solid #e2e8f0; }
+        .modal-w-420 { max-width:420px; }
+        .info-box { padding:12px 16px; border-radius:12px; font-size:14px; }
+        .info-box-warning { background:#fef3c7; }
+        .info-box-gray { background:#f1f5f9; }
+        .info-box-blue { background:#e0e7ff; }
+        .info-box-notice { margin-bottom:12px; padding:10px; background:#fff3cd; border:1px solid #ffeeba; border-radius:6px; font-size:13px; color:#856404; }
+        .select-half { padding:8px; border-radius:6px; border:1px solid #ddd; }
+        .phone-input { flex:1; }
+        .btn-flex-1 { flex:1; }
+        .fw-600 { font-weight:600; }
+        .label-inline { display:flex; align-items:center; gap:6px; cursor:pointer; font-size:13px; white-space:nowrap; user-select:none; }
+        .legend-wrap { margin-top:12px; font-size:13px; color:#64748b; display:flex; gap:20px; flex-wrap:wrap; }
+        .cert-indent { padding-left:26px; }
+    </style>
 </head>
 <body>
     <!-- Login Page -->
@@ -46,7 +69,7 @@ require_once __DIR__ . '/config/security.php';
         <header class="header">
             <div class="header-content">
                 <div class="header-logo">
-                    <h1>휴가신청 시스템 <span id="currentYear" style="font-size:14px; font-weight:400;"></span></h1>
+                    <h1>휴가신청 시스템 <span id="currentYear" class="year-label"></span></h1>
                 </div>
                 <div class="header-user">
                     <div class="user-info">
@@ -91,9 +114,9 @@ require_once __DIR__ . '/config/security.php';
             <div id="calendarSection" class="section">
                 <div class="section-header">
                     <h2 class="section-title">📅 휴가 캘린더</h2>
-                    <div style="display:flex; gap:8px;">
-                        <button class="btn btn-secondary" id="btnPrintResign" style="display:none;">📄 퇴직원</button>
-                        <div class="tab-dropdown" style="flex-shrink:0;">
+                    <div class="flex-bar-8">
+                        <button class="btn btn-secondary hidden" id="btnPrintResign">📄 퇴직원</button>
+                        <div class="tab-dropdown">
                             <button id="btnSupportMenu" class="btn btn-secondary">📋 행정지원요청 ▾</button>
                             <div class="tab-dropdown-menu" id="supportMenu">
                                 <div class="tab-dropdown-group-label">증명서</div>
@@ -111,13 +134,13 @@ require_once __DIR__ . '/config/security.php';
                 </div>
                 <div class="section-body">
                     <div id="calendar"></div>
-                    <div style="margin-top: 12px; font-size: 13px; color: #64748b; display: flex; gap: 20px; flex-wrap: wrap;">
-                        <div style="display: flex; align-items: center; gap: 6px;">
-                            <div style="width: 12px; height: 12px; background-color: #dcfce7; border: 1px solid #166534; border-radius: 2px;"></div>
+                    <div class="legend-wrap">
+                        <div class="legend-box">
+                            <div class="legend-swatch swatch-family"></div>
                             <span>초록색: Family Day (매월 3째주 금요일)</span>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 6px;">
-                            <div style="width: 12px; height: 12px; background-color: #fee2e2; border: 1px solid #dc2626; border-radius: 2px;"></div>
+                        <div class="legend-box">
+                            <div class="legend-swatch swatch-holiday"></div>
                             <span>빨간색: 휴일/공휴일</span>
                         </div>
                     </div>
@@ -127,25 +150,25 @@ require_once __DIR__ . '/config/security.php';
             <!-- Vacation List Section -->
             <div id="vacationListSection" class="section">
 <div class="section-header">
-    <div style="display:flex;align-items:center;gap:12px;">
+    <div class="flex-row gap-12 items-center">
         <h2 class="section-title">📋 휴가 신청 내역</h2>
-        <label id="myOnlyLabel" style="display:none;align-items:center;gap:6px;cursor:pointer;font-size:13px;white-space:nowrap;user-select:none;">
+        <label id="myOnlyLabel" class="label-inline d-none">
             <input type="checkbox" id="showMyOnly">
             내 휴가만 보기
         </label>
     </div>
-    <div style="display:flex; gap:10px;">
-        <select id="filterDept" style="padding:8px 12px; border-radius:8px; border:1px solid #e2e8f0; display:none;">
+    <div class="flex-bar">
+        <select id="filterDept" class="filter-select-sm d-none">
             <option value="">전체 본부</option>
         </select>
-        <select id="filterEmp" style="padding:8px 12px; border-radius:8px; border:1px solid #e2e8f0; display:none;">
+        <select id="filterEmp" class="filter-select-sm d-none">
             <option value="">전체 사원</option>
         </select>
-        <select id="filterYear" style="padding:8px 12px; border-radius:8px; border:1px solid #e2e8f0;">
+        <select id="filterYear" class="filter-select-sm">
         </select>
-        <select id="filterMonth" style="padding:8px 12px; border-radius:8px; border:1px solid #e2e8f0;">
+        <select id="filterMonth" class="filter-select-sm">
         </select>
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;white-space:nowrap;user-select:none;">
+        <label class="label-inline">
             <input type="checkbox" id="showCancelled">
             취소 내역 포함
         </label>
@@ -175,8 +198,8 @@ require_once __DIR__ . '/config/security.php';
             <div id="annualLeaveSection" class="section hidden">
                 <div class="section-header">
                     <h2 class="section-title">📊 연차 현황</h2>
-                    <div style="display:flex; gap:10px;">
-                        <select id="annualLeaveYear" style="padding:8px 12px; border-radius:8px; border:1px solid #e2e8f0;">
+                    <div class="flex-bar">
+                        <select id="annualLeaveYear" class="filter-select-sm">
                         </select>
                         <button id="btnBackToVacation" class="btn btn-sm btn-secondary">휴가 관리로 돌아가기</button>
                     </div>
@@ -207,13 +230,13 @@ require_once __DIR__ . '/config/security.php';
 
     <!-- Certificate Request Modal -->
     <div id="certificateModal" class="modal-overlay hidden">
-        <div class="modal" style="max-width:420px;">
+        <div class="modal modal-w-420">
             <div class="modal-header">
                 <h3 class="modal-title" id="certModalTitle">증명서 발급 요청</h3>
                 <button class="modal-close" id="btnCloseCert">&times;</button>
             </div>
             <div class="modal-body">
-                <p style="margin-bottom:12px; font-size:14px; color:#333;">증명서 옵션을 선택해주세요.</p>
+                <p class="mb-12 text-sm-14">증명서 옵션을 선택해주세요.</p>
                 <input type="hidden" id="certType">
                 <label class="checkbox-row">
                     <input type="checkbox" id="certShowResident">
@@ -230,8 +253,8 @@ require_once __DIR__ . '/config/security.php';
                         <input type="checkbox" id="certJobDesc">
                         업무기재
                     </label>
-                    <div id="certJobDescContentGroup" class="hidden" style="padding-left:26px; margin-bottom:8px;">
-                        <textarea id="certJobDescContent" rows="4" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px; font-size:14px;" placeholder="업무 내용을 입력해주세요"></textarea>
+                    <div id="certJobDescContentGroup" class="hidden cert-indent">
+                        <textarea id="certJobDescContent" rows="4" class="mb-8 w-full-input text-sm-14" placeholder="업무 내용을 입력해주세요"></textarea>
                     </div>
                 </div>
                 <label class="checkbox-row">
@@ -242,9 +265,9 @@ require_once __DIR__ . '/config/security.php';
                     <input type="checkbox" id="certJobDescEnglish">
                     영문
                 </label>
-                <div style="display:flex; gap:8px; margin-top:16px;">
-                    <button id="btnSubmitCert" class="btn btn-primary" style="flex:1;">제출</button>
-                    <button id="btnCancelCert" class="btn btn-secondary" style="flex:1;">취소</button>
+                <div class="flex-bar-8 mt-16">
+                    <button id="btnSubmitCert" class="btn btn-primary btn-flex-1">제출</button>
+                    <button id="btnCancelCert" class="btn btn-secondary btn-flex-1">취소</button>
                 </div>
             </div>
         </div>
@@ -252,17 +275,17 @@ require_once __DIR__ . '/config/security.php';
 
     <!-- Support Request Modal -->
     <div id="supportModal" class="modal-overlay hidden">
-        <div class="modal" style="max-width:450px;">
+        <div class="modal modal-sm">
             <div class="modal-header">
                 <h3 class="modal-title" id="supportModalTitle">행정지원 요청</h3>
                 <button class="modal-close" id="btnCloseSupport">&times;</button>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="supportType">
-                <p id="supportNotice" style="margin-bottom:12px; padding:10px; background:#fff3cd; border:1px solid #ffeeba; border-radius:6px; font-size:13px; color:#856404;"></p>
+                <p id="supportNotice" class="info-box-notice"></p>
                 <div class="form-group">
                     <label>요청사항</label>
-                    <textarea id="supportContent" rows="5" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px; font-size:14px;" placeholder="요청 내용을 입력해주세요&#10;예: 사원증 재발급 / 명함 100매 / A4 용지 2박스"></textarea>
+                    <textarea id="supportContent" rows="5" class="w-full-input text-sm-14" placeholder="요청 내용을 입력해주세요&#10;예: 사원증 재발급 / 명함 100매 / A4 용지 2박스"></textarea>
                 </div>
             </div>
             <div class="modal-footer">
@@ -287,26 +310,26 @@ require_once __DIR__ . '/config/security.php';
                             <option value="">선택하세요</option>
                         </select>
                     </div>
-                    <div class="form-group" id="condolenceTypeGroup" style="display:none;">
+                    <div class="form-group d-none" id="condolenceTypeGroup">
                         <label>경조사사유</label>
                         <select id="condolenceType">
                             <option value="">선택하세요</option>
                         </select>
                     </div>
-                    <div class="form-group" id="condolenceInfo" style="display:none;">
-                        <div id="condolenceInfoDefault" style="padding: 12px 16px; background: #fef3c7; border-radius: 12px; font-size: 14px;">
-                            기본 <span id="condolenceTotalDays" style="font-weight:600;">20</span>일 중 남은 <span id="condolenceRemainingDays" style="font-weight:600;">20</span>일, 초과 시 연차 차감
+                    <div class="form-group d-none" id="condolenceInfo">
+                        <div id="condolenceInfoDefault" class="info-box info-box-warning">
+                            기본 <span id="condolenceTotalDays" class="fw-600">20</span>일 중 남은 <span id="condolenceRemainingDays" class="fw-600">20</span>일, 초과 시 연차 차감
                         </div>
-                        <div id="condolenceInfoSpouseBirth" style="padding: 12px 16px; background: #fef3c7; border-radius: 12px; font-size: 14px; display:none;">
-                            <span id="spouseBirthRound" style="font-weight:600;">1/4차</span> - 남은 <span id="spouseBirthRemaining" style="font-weight:600;">20</span>일, 초과 시 연차 차감
+                        <div id="condolenceInfoSpouseBirth" class="info-box info-box-warning d-none">
+                            <span id="spouseBirthRound" class="fw-600">1/4차</span> - 남은 <span id="spouseBirthRemaining" class="fw-600">20</span>일, 초과 시 연차 차감
                         </div>
                     </div>
                     <div class="form-group">
                         <label>시작일</label>
-                        <div style="display: flex; gap: 5px; align-items: center;">
+                        <div class="flex-row gap-6 items-center">
                             <input type="date" id="startDate" required>
                             <div id="startHalfContainer">
-                                <select id="startHalf" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd;">
+                                <select id="startHalf" class="select-half">
                                     <option value="full">종일</option>
                                     <option value="afternoon">오후</option>
                                 </select>
@@ -315,10 +338,10 @@ require_once __DIR__ . '/config/security.php';
                     </div>
                     <div class="form-group">
                         <label>종료일</label>
-                        <div style="display: flex; gap: 5px; align-items: center;">
+                        <div class="flex-row gap-6 items-center">
                             <input type="date" id="endDate" required>
                             <div id="endHalfContainer">
-                                <select id="endHalf" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd;">
+                                <select id="endHalf" class="select-half">
                                     <option value="full">종일</option>
                                     <option value="morning">오전</option>
                                 </select>
@@ -327,21 +350,21 @@ require_once __DIR__ . '/config/security.php';
                     </div>
                     <div class="form-group">
                         <label>일수</label>
-                        <div id="days" style="padding: 12px 16px; background: #f1f5f9; border-radius: 12px; font-weight: 600;">0</div>
+                        <div id="days" class="info-box info-box-gray fw-600">0</div>
                     </div>
                     <div class="form-group">
                         <label>잔여 일수</label>
-                        <div id="remainingDays" style="padding: 12px 16px; background: #e0e7ff; border-radius: 12px; font-weight: 600;">0</div>
+                        <div id="remainingDays" class="info-box info-box-blue fw-600">0</div>
                     </div>
-                    <div class="form-group" id="severanceRemainingGroup" style="display:none;">
+                    <div class="form-group d-none" id="severanceRemainingGroup">
                         <label>잔여 보전연차</label>
-                        <div id="severanceRemainingDays" style="padding: 12px 16px; background: #e0e7ff; border-radius: 12px; font-weight: 600;">0</div>
+                        <div id="severanceRemainingDays" class="info-box info-box-blue fw-600">0</div>
                     </div>
                     <div class="form-group">
                         <label>비상연락처</label>
-                        <div style="display: flex; gap: 10px;">
-                            <input type="tel" id="phone1" placeholder="010-0000-0000" style="flex: 1;">
-                            <input type="tel" id="phone2" placeholder="02-0000-0000" style="flex: 1;">
+                        <div class="flex-bar">
+                            <input type="tel" id="phone1" placeholder="010-0000-0000" class="flex-1">
+                            <input type="tel" id="phone2" placeholder="02-0000-0000" class="flex-1">
                         </div>
                     </div>
                     <div class="form-group">
@@ -373,26 +396,26 @@ require_once __DIR__ . '/config/security.php';
                             <option value="">선택하세요</option>
                         </select>
                     </div>
-                    <div class="form-group" id="editCondolenceTypeGroup" style="display:none;">
+                    <div class="form-group d-none" id="editCondolenceTypeGroup">
                         <label>경조사사유</label>
                         <select id="editCondolenceType">
                             <option value="">선택하세요</option>
                         </select>
                     </div>
-                    <div class="form-group" id="editCondolenceInfo" style="display:none;">
-                        <div id="editCondolenceInfoDefault" style="padding: 12px 16px; background: #fef3c7; border-radius: 12px; font-size: 14px;">
-                            기본 <span id="editCondolenceTotalDays" style="font-weight:600;">20</span>일 중 남은 <span id="editCondolenceRemainingDays" style="font-weight:600;">20</span>일, 초과 시 연차 차감
+                    <div class="form-group d-none" id="editCondolenceInfo">
+                        <div id="editCondolenceInfoDefault" class="info-box info-box-warning">
+                            기본 <span id="editCondolenceTotalDays" class="fw-600">20</span>일 중 남은 <span id="editCondolenceRemainingDays" class="fw-600">20</span>일, 초과 시 연차 차감
                         </div>
-                        <div id="editCondolenceInfoSpouseBirth" style="padding: 12px 16px; background: #fef3c7; border-radius: 12px; font-size: 14px; display:none;">
-                            <span id="editSpouseBirthRound" style="font-weight:600;">1/4차</span> - 남은 <span id="editSpouseBirthRemaining" style="font-weight:600;">20</span>일, 초과 시 연차 차감
+                        <div id="editCondolenceInfoSpouseBirth" class="info-box info-box-warning d-none">
+                            <span id="editSpouseBirthRound" class="fw-600">1/4차</span> - 남은 <span id="editSpouseBirthRemaining" class="fw-600">20</span>일, 초과 시 연차 차감
                         </div>
                     </div>
                     <div class="form-group">
                         <label>시작일</label>
-                        <div style="display: flex; gap: 5px; align-items: center;">
+                        <div class="flex-row gap-6 items-center">
                             <input type="date" id="editStartDate" required>
                             <div id="editStartHalfContainer">
-                                <select id="editStartHalf" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd;">
+                                <select id="editStartHalf" class="select-half">
                                     <option value="full">종일</option>
                                     <option value="afternoon">오후</option>
                                 </select>
@@ -401,10 +424,10 @@ require_once __DIR__ . '/config/security.php';
                     </div>
                     <div class="form-group">
                         <label>종료일</label>
-                        <div style="display: flex; gap: 5px; align-items: center;">
+                        <div class="flex-row gap-6 items-center">
                             <input type="date" id="editEndDate" required>
                             <div id="editEndHalfContainer">
-                                <select id="editEndHalf" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd;">
+                                <select id="editEndHalf" class="select-half">
                                     <option value="full">종일</option>
                                     <option value="morning">오전</option>
                                 </select>
@@ -413,7 +436,7 @@ require_once __DIR__ . '/config/security.php';
                     </div>
                     <div class="form-group">
                         <label>일수</label>
-                        <div id="editDays" style="padding: 12px 16px; background: #f1f5f9; border-radius: 12px; font-weight: 600;">0</div>
+                        <div id="editDays" class="info-box info-box-gray fw-600">0</div>
                     </div>
                     <div class="form-group">
                         <label>사유</label>

@@ -274,10 +274,10 @@ function showDayVacations(dateStr) {
         return;
     }
     
-    let html = `<h3>${dateStr} 휴가 목록</h3><ul style="list-style:none; padding:0;">`;
+    let html = `<h3>${dateStr} 휴가 목록</h3><ul class="calendar-list">`;
     dayEvents.forEach(e => {
         const props = e.extendedProps;
-        html += `<li style="padding:8px; border-bottom:1px solid #eee;">
+        html += `<li class="calendar-item">
             <strong>${e.title}</strong> - ${props.type} (${props.days}일)
             <span class="status-badge status-${props.status}">${props.status === 'applied' ? '신청' : '승인'}</span>
         </li>`;

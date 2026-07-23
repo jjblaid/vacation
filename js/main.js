@@ -426,7 +426,7 @@ async function loadVacationList(year, month, page, empId, deptId, showCancelled)
     } catch (err) {
         console.error('Failed to load vacation list:', err);
         if (tbody) {
-            tbody.innerHTML = '<tr><td colspan="' + (showEmployeeInfo ? 7 : 5) + '" style="text-align:center;color:red;">데이터 로드 실패: ' + err.message + '</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="' + (showEmployeeInfo ? 7 : 5) + '" class="error-message-red">데이터 로드 실패: ' + err.message + '</td></tr>';
         }
     }
 }
@@ -441,7 +441,7 @@ function renderPagination(total, page, limit, year, month, empId, deptId, showCa
     
     const uid = 'p' + Date.now();
     _pageParams[uid] = { year, month: month ?? null, empId: empId ?? null, deptId: deptId ?? null, showCancelled };
-    let html = '<div style="display:flex; justify-content:center; gap:8px; margin-top:16px;">';
+    let html = '<div class="flex-btn-row">';
     for (let i = 1; i <= totalPages; i++) {
         html += `<button class="btn btn-sm ${i === page ? 'btn-primary' : 'btn-secondary'}" data-action="loadVacationList" data-uid="${uid}" data-page="${i}">${i}</button>`;
     }
@@ -461,12 +461,12 @@ function renderVacationTable(data) {
     if (!tbody) return;
     
     if (data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="' + (showEmployeeInfo ? 7 : 5) + '" style="text-align:center;">휴가 신청 내역이 없습니다.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="' + (showEmployeeInfo ? 7 : 5) + '" class="empty-message">휴가 신청 내역이 없습니다.</td></tr>';
         return;
     }
     
     const showEmployeeInfo = ['system_admin', 'reviewer', 'dept_manager', 'ceo', 'vice_president'].includes(currentUser.role);
-    const canApprove = ['system_admin', 'reviewer'].includes(currentUser.role);
+    const canApprove = ['system_admin'].includes(currentUser.role);
     const canEdit = ['user', 'dept_manager'].includes(currentUser.role);
     
     let headerHtml = '<tr>';
@@ -486,7 +486,7 @@ function renderVacationTable(data) {
         if (showEmployeeInfo) {
             const deptColor = r.department_color || '#94a3b8';
             row += `<td>${r.employee_name}</td>`;
-            row += `<td><span class="color-dot" style="background:${deptColor}"></span>${r.department_name || '-'}</td>`;
+            row += `<td><span class="color-dot" data-color="${deptColor}"></span>${r.department_name || '-'}</td>`;
         }
         row += `<td>${r.start_date} ~ ${r.end_date}</td>`;
         row += `<td>${r.vacation_type_name}</td>`;
@@ -511,6 +511,7 @@ function renderVacationTable(data) {
         
         return row;
     }).join('');
+    document.querySelectorAll('#vacationList .color-dot').forEach(el => { el.style.background = el.dataset.color || '#ccc'; });
 }
 
 async function approveRequest(id) {
@@ -590,7 +591,7 @@ async function loadEmployeeAnnualList(year) {
     } catch (err) {
         console.error('Failed to load annual leave list:', err);
         if (tbody) {
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:red;">데이터 로드 실패: ' + err.message + '</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" class="error-message-red">데이터 로드 실패: ' + err.message + '</td></tr>';
         }
     }
 }
@@ -600,24 +601,24 @@ function renderEmployeeAnnualTable(data) {
     if (!tbody) return;
 
     if (data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">데이터가 없습니다.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="empty-message">데이터가 없습니다.</td></tr>';
         return;
     }
 
     tbody.innerHTML = data.map(emp => {
         const remaining = emp.remaining;
-        const remainingClass = remaining < 0 ? 'color: #dc2626; font-weight: 700;' :
-                              remaining <= 3 ? 'color: #f59e0b; font-weight: 600;' :
-                              'color: #16a34a;';
+        const remainingClass = remaining < 0 ? 'remaining-negative' :
+                              remaining <= 3 ? 'remaining-low' :
+                              'remaining-ok';
 
         return `<tr>
             <td>${emp.name}</td>
-            <td style="color:#64748b;font-size:13px;">${emp.emp_no}</td>
+            <td class="td-muted">${emp.emp_no}</td>
             <td>${emp.department_name || '-'}</td>
             <td>${emp.position_name || '-'}</td>
-            <td style="text-align:center;">${emp.granted.toFixed(1)}</td>
-            <td style="text-align:center;">${emp.used.toFixed(1)}</td>
-            <td style="text-align:center; ${remainingClass}">${remaining.toFixed(1)}</td>
+            <td class="td-center">${emp.granted.toFixed(1)}</td>
+            <td class="td-center">${emp.used.toFixed(1)}</td>
+            <td class="td-center ${remainingClass}">${remaining.toFixed(1)}</td>
         </tr>`;
     }).join('');
 }
