@@ -652,9 +652,9 @@ const data = {
         }
         
         async function moveType(id, direction) {
-            const idx = vacationTypes.findIndex(t => t.id === id);
+            const idx = vacationTypes.findIndex(t => String(t.id) === String(id));
             if (idx === -1) return;
-            const target = idx + direction;
+            const target = idx + Number(direction);
             if (target < 0 || target >= vacationTypes.length) return;
 
             const ids = vacationTypes.map(t => t.id);
@@ -691,7 +691,7 @@ const data = {
         }
 
         function editType(id) {
-            const type = vacationTypes.find(t => t.id === id);
+            const type = vacationTypes.find(t => String(t.id) === String(id));
             if (!type) return;
 
             document.getElementById('typeModal').classList.remove('hidden');
@@ -985,7 +985,7 @@ const data = {
 
         function editAnnualLeave(empId) {
             const year = document.getElementById('annualYearSelect').value;
-            const emp = annualLeaveData.find(e => e.id === empId);
+            const emp = annualLeaveData.find(e => String(e.id) === String(empId));
             if (!emp) return;
 
             document.getElementById('aleEmployeeId').value = emp.id;

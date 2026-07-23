@@ -49,7 +49,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>관리자 페이지 - 휴가신청 시스템</title>
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet" integrity="sha384-39yVKLsD9lMelmY+ij49KZgE+Mfk6hjdUPNE8yKHqdMPceLXzhlCJAK81xlD5jDjday" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet" integrity="sha512-NHredShh2K4bAM40hiHIGPEzhWGD9mcUwbAt3Q/thHmiqJIe0eTVdaTb4Uaj5dbrITJrbRcnQitc5fZCvr5Z8Q==" crossorigin="anonymous">
     <link href="css/styles.css" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" integrity="sha512-8o9GL4vAqkQv5ASESaPGM9ynmyrOu6tsrukDDRwRnsbC0d2xlN35dCr6S9W37/4HbKhIEVCvfCtBZSrl4hA6bQ==" crossorigin="anonymous">
     <style nonce="<?= $cspNonce ?>">
@@ -824,7 +824,7 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js" integrity="sha384-5/vsv56401Wf+RP3yE5/aIKW4wutk4nLY3HjueTXN0rA+DmweMtrYaN6RSjdv31bk" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js" integrity="sha512-pQxj7UAETUWMJS1KY6W3g+o/hW3m0P+1vxit2SRrjS2GGTMBToNixA7OcQy/t66E17zMdc0XHMCMLpZXLEqDcQ==" crossorigin="anonymous"></script>
     <script src="js/api.js"></script>
     <script nonce="<?= $cspNonce ?>">const currentUserId = <?= $currentUser['id'] ?>;</script>
     <script src="js/admin.js"></script>
