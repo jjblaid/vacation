@@ -118,7 +118,7 @@ function getList() {
     
     // Exclude cancelled (기본값: 취소 내역 제외)
     $excludeCancelled = $_GET['exclude_cancelled'] ?? '1';
-    if ($excludeCancelled === '1') {
+    if ($excludeCancelled === '1' && $status !== 'cancelled') {
         $conditions[] = "vr.status != 'cancelled'";
     }
     
