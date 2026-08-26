@@ -26,11 +26,11 @@ document.addEventListener('click', function(e) {
         case 'editDepartment': editDepartment(a.id); break;
         case 'deleteDepartment': deleteDepartment(a.id); break;
         case 'printRequest': {
+            document.getElementById('printRequestId').value = a.id;
+            document.getElementById('printCreatedDate').textContent = a.created || new Date().toISOString().split('T')[0];
             const today = new Date().toISOString().split('T')[0];
-            const signDate = prompt('출력 날짜를 입력하세요 (YYYY-MM-DD)', today);
-            if (signDate !== null) {
-                window.open('print.php?id=' + a.id + '&sign_date=' + encodeURIComponent(signDate), '_blank');
-            }
+            document.getElementById('printSignDate').value = today;
+            document.getElementById('printDateModal').classList.remove('hidden');
             break;
         }
         case 'editAnnualLeave': editAnnualLeave(a.id); break;
@@ -99,6 +99,15 @@ function initAdminEventListeners() {
     $('btnCloseCertComplete')?.addEventListener('click', closeCertCompleteModal);
     $('btnCancelCertComplete')?.addEventListener('click', closeCertCompleteModal);
     $('btnSaveCertComplete')?.addEventListener('click', saveCertComplete);
+    // Print date modal
+    $('btnClosePrintModal')?.addEventListener('click', () => $('printDateModal').classList.add('hidden'));
+    $('btnCancelPrintModal')?.addEventListener('click', () => $('printDateModal').classList.add('hidden'));
+    $('btnConfirmPrint')?.addEventListener('click', () => {
+        const id = $('printRequestId').value;
+        const date = $('printSignDate').value;
+        $('printDateModal').classList.add('hidden');
+        window.open(`print.php?id=${id}&sign_date=${encodeURIComponent(date)}`, '_blank');
+    });
     // SMTP settings
     $('btnSaveSmtp')?.addEventListener('click', saveSmtpSettings);
     $('btnTestSmtp')?.addEventListener('click', testSmtpSettings);
@@ -932,7 +941,7 @@ const data = {
                     <td>${(r.reason || '').substring(0, 20)}${r.reason && r.reason.length > 20 ? '...' : ''}</td>
                     <td><span class="status-badge status-${r.status}">${statusNames[r.status]}</span></td>
                     <td>
-                        <button class="btn btn-sm btn-primary" data-action="printRequest" data-id="${r.id}">출력</button>
+                        <button class="btn btn-sm btn-primary" data-action="printRequest" data-id="${r.id}" data-created="${r.created_at}">출력</button>
                     </td>
                 </tr>
             `).join('');

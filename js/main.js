@@ -13,7 +13,7 @@ document.addEventListener('click', function(e) {
         case 'editVacation': editVacation(a.id); break;
         case 'approveRequest': approveRequest(a.id); break;
         case 'cancelRequest': cancelRequest(a.id); break;
-        case 'printRequest': printRequest(a.id); break;
+        case 'printRequest': printRequest(a.id, a.created); break;
         case 'loadVacationList':
             const pp = _pageParams[a.uid];
             if (pp) loadVacationList(pp.year, pp.month, a.page, pp.empId, pp.deptId, pp.showCancelled);
@@ -49,6 +49,7 @@ function initEventListeners() {
     $('filterYear')?.addEventListener('change', filterByYear);
     $('filterMonth')?.addEventListener('change', filterByYear);
     $('showCancelled')?.addEventListener('change', filterByYear);
+    $('filterStatus')?.addEventListener('change', filterByYear);
     // Annual leave
     $('annualLeaveYear')?.addEventListener('change', loadEmployeeAnnualList);
     $('btnBackToVacation')?.addEventListener('click', toggleAnnualLeaveView);
@@ -77,6 +78,15 @@ function initEventListeners() {
     $('btnClosePassword')?.addEventListener('click', closePasswordModal);
     $('btnCancelPassword')?.addEventListener('click', closePasswordModal);
     $('passwordForm')?.addEventListener('submit', changePassword);
+    // Print date modal
+    $('btnClosePrintModal')?.addEventListener('click', () => $('printDateModal').classList.add('hidden'));
+    $('btnCancelPrintModal')?.addEventListener('click', () => $('printDateModal').classList.add('hidden'));
+    $('btnConfirmPrint')?.addEventListener('click', () => {
+        const id = $('printRequestId').value;
+        const date = $('printSignDate').value;
+        $('printDateModal').classList.add('hidden');
+        window.open(`print.php?id=${id}&sign_date=${encodeURIComponent(date)}`, 'printWindow', 'width=800,height=600,scrollbars=yes');
+    });
 }
 
 async function checkAuth() {
@@ -123,6 +133,7 @@ function showApp() {
     
     if (currentUser.role === 'system_admin') {
         document.getElementById('adminLink').classList.remove('hidden');
+        document.getElementById('filterStatus')?.classList.remove('d-none');
     } else {
         document.getElementById('adminLink').classList.add('hidden');
     }
@@ -386,12 +397,15 @@ async function loadVacationTypes() {
     }
 }
 
-async function loadVacationList(year, month, page, empId, deptId, showCancelled) {
+async function loadVacationList(year, month, page, empId, deptId, showCancelled, status) {
     year = year || new Date().getFullYear();
     month = month || null;
     page = parseInt(page) || 1;
     if (showCancelled === undefined) {
         showCancelled = document.getElementById('showCancelled')?.checked || false;
+    }
+    if (status === undefined) {
+        status = document.getElementById('filterStatus')?.value || '';
     }
     if (!empId) {
         empId = document.getElementById('filterEmp')?.value;
@@ -416,7 +430,7 @@ async function loadVacationList(year, month, page, empId, deptId, showCancelled)
     }
     
     try {
-        const res = await api.vacationRequests.list(year, month, empId, deptId, !showCancelled);
+        const res = await api.vacationRequests.list(year, month, empId, deptId, !showCancelled, status);
         let data = res.data || [];
         
         const total = data.length;
@@ -528,7 +542,7 @@ function renderVacationTable(data) {
             row += `<button class="btn btn-sm btn-secondary" data-action="cancelRequest" data-id="${r.id}">취소</button> `;
         }
         
-        row += `<button class="btn btn-sm btn-primary" data-action="printRequest" data-id="${r.id}">출력</button>`;
+        row += `<button class="btn btn-sm btn-primary" data-action="printRequest" data-id="${r.id}" data-created="${r.created_at}">출력</button>`;
         row += `</td></tr>`;
         
         return row;
@@ -564,11 +578,12 @@ async function cancelRequest(id) {
     }
 }
 
-function printRequest(id) {
+function printRequest(id, createdAt) {
+    document.getElementById('printRequestId').value = id;
+    document.getElementById('printCreatedDate').textContent = createdAt || new Date().toISOString().split('T')[0];
     const today = new Date().toISOString().split('T')[0];
-    const signDate = prompt('출력 날짜를 입력하세요 (YYYY-MM-DD)', today);
-    if (signDate === null) return;
-    window.open(`print.php?id=${id}&sign_date=${encodeURIComponent(signDate)}`, 'printWindow', 'width=800,height=600,scrollbars=yes');
+    document.getElementById('printSignDate').value = today;
+    document.getElementById('printDateModal').classList.remove('hidden');
 }
 
 function toggleAnnualLeaveView() {

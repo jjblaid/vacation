@@ -172,6 +172,12 @@ require_once __DIR__ . '/config/security.php';
             <input type="checkbox" id="showCancelled">
             취소 내역 포함
         </label>
+        <select id="filterStatus" class="filter-select-sm d-none">
+            <option value="">전체 상태</option>
+            <option value="applied">신청 (미완료)</option>
+            <option value="approved">승인</option>
+            <option value="cancelled">취소</option>
+        </select>
     </div>
 </div>
                 <div class="section-body">
@@ -461,6 +467,31 @@ require_once __DIR__ . '/config/security.php';
             <div class="modal-body" id="detailContent"></div>
         </div>
     </div>
+
+    <!-- Print Date Modal -->
+    <div id="printDateModal" class="modal-overlay hidden">
+        <div class="modal" style="max-width:400px">
+            <div class="modal-header">
+                <h3 class="modal-title">휴가 신청서 출력</h3>
+                <button class="modal-close" id="btnClosePrintModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>신청일</label>
+                    <div id="printCreatedDate" style="padding:8px;background:#f5f5f5;border-radius:4px"></div>
+                </div>
+                <div class="form-group">
+                    <label>출력 날짜</label>
+                    <input type="date" id="printSignDate" class="form-control">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btnCancelPrintModal">취소</button>
+                <button type="button" class="btn btn-primary" id="btnConfirmPrint">출력</button>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="printRequestId">
 
     <!-- Password Change Modal -->
     <div id="passwordModal" class="modal-overlay hidden">

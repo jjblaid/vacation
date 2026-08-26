@@ -195,13 +195,14 @@ employees: {
     },
     
     vacationRequests: {
-        list(year, month, empId, deptId, excludeCancelled = true) {
+        list(year, month, empId, deptId, excludeCancelled = true, status = '') {
             let url = 'vacation_requests.php?action=list';
             if (year != null && year !== undefined && year !== '') url += `&year=${year}`;
             if (month != null && month !== undefined && month !== '') url += `&month=${month}`;
             if (empId != null && empId !== undefined && empId !== '') url += `&emp_id=${empId}`;
             if (deptId != null && deptId !== undefined && deptId !== '') url += `&dept_id=${deptId}`;
             url += `&exclude_cancelled=${excludeCancelled ? '1' : '0'}`;
+            if (status !== '') url += `&status=${encodeURIComponent(status)}`;
             return api.request(url);
         },
         calendar(start, end) {
