@@ -25,7 +25,14 @@ document.addEventListener('click', function(e) {
         case 'deletePosition': deletePosition(a.id); break;
         case 'editDepartment': editDepartment(a.id); break;
         case 'deleteDepartment': deleteDepartment(a.id); break;
-        case 'printRequest': window.open('print.php?id=' + a.id, '_blank'); break;
+        case 'printRequest': {
+            const today = new Date().toISOString().split('T')[0];
+            const signDate = prompt('출력 날짜를 입력하세요 (YYYY-MM-DD)', today);
+            if (signDate !== null) {
+                window.open('print.php?id=' + a.id + '&sign_date=' + encodeURIComponent(signDate), '_blank');
+            }
+            break;
+        }
         case 'editAnnualLeave': editAnnualLeave(a.id); break;
         case 'openCertCompleteModal': openCertCompleteModal(a.id); break;
         case 'openSupportCompleteModal': openSupportCompleteModal(a.id); break;
@@ -67,6 +74,18 @@ function initAdminEventListeners() {
     $('holidayYear')?.addEventListener('change', loadHolidays);
     $('btnCloseHoliday')?.addEventListener('click', closeHolidayModal);
     $('btnCancelHoliday')?.addEventListener('click', closeHolidayModal);
+    // All requests filter
+    document.querySelectorAll('#tabAllRequests .filter-group [data-status]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('#tabAllRequests .filter-group [data-status]').forEach(b => {
+                b.classList.remove('btn-primary');
+                b.classList.add('btn-secondary');
+            });
+            btn.classList.remove('btn-secondary');
+            btn.classList.add('btn-primary');
+            loadAllRequests(btn.dataset.status);
+        });
+    });
     // Annual leave edit modal
     $('btnCloseAnnualLeaveEdit')?.addEventListener('click', closeAnnualLeaveEditModal);
     $('btnCancelAnnualLeaveEdit')?.addEventListener('click', closeAnnualLeaveEditModal);
@@ -738,9 +757,12 @@ const data = {
             }
         }
 
-        async function loadAllRequests() {
-            const res = await api.vacationRequests.list();
-            allRequests = res.data;
+        async function loadAllRequests(status = '') {
+            const url = 'api/vacation_requests.php?action=list' +
+                (status ? '&status=' + encodeURIComponent(status) : '');
+            const res = await fetch(url);
+            const data = await res.json();
+            allRequests = data.data || [];
             renderAllRequests();
         }
 

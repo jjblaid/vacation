@@ -29,6 +29,7 @@ function getList() {
     $month = $_GET['month'] ?? null;
     $empId = $_GET['emp_id'] ?? null;
     $deptId = $_GET['dept_id'] ?? null;
+    $status = $_GET['status'] ?? '';
     
     $sql = "SELECT vr.*, e.name as employee_name, e.emp_no, p.name as position_name, e.department_id,
             d.name as department_name, d.code as department_code, d.color as department_color,
@@ -107,6 +108,12 @@ function getList() {
                 $params[] = $user['id'];
                 break;
         }
+    }
+
+    // Status filter
+    if ($status !== '' && in_array($status, ['applied', 'approved', 'cancelled'])) {
+        $conditions[] = "vr.status = ?";
+        $params[] = $status;
     }
     
     // Exclude cancelled (기본값: 취소 내역 제외)

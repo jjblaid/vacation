@@ -3,6 +3,7 @@ let vacationTypes = [];
 let condolenceTypes = [];
 let holidays = [];
 const _pageParams = {};
+const ENABLE_CANCEL_BUTTON = true; // false → 취소 버튼 숨김
 
 document.addEventListener('click', function(e) {
     const el = e.target.closest('[data-action]');
@@ -514,6 +515,9 @@ function renderVacationTable(data) {
         
         if (r.status === 'applied' && (isOwnRequest || isDeptMember)) {
             row += `<button class="btn btn-sm btn-secondary" data-action="editVacation" data-id="${r.id}">수정</button> `;
+            if (ENABLE_CANCEL_BUTTON) {
+                row += `<button class="btn btn-sm btn-secondary" data-action="cancelRequest" data-id="${r.id}">취소</button> `;
+            }
         }
         
         if (r.status === 'applied' && canApprove) {
@@ -561,7 +565,10 @@ async function cancelRequest(id) {
 }
 
 function printRequest(id) {
-    window.open(`print.php?id=${id}`, 'printWindow', 'width=800,height=600,scrollbars=yes');
+    const today = new Date().toISOString().split('T')[0];
+    const signDate = prompt('출력 날짜를 입력하세요 (YYYY-MM-DD)', today);
+    if (signDate === null) return;
+    window.open(`print.php?id=${id}&sign_date=${encodeURIComponent(signDate)}`, 'printWindow', 'width=800,height=600,scrollbars=yes');
 }
 
 function toggleAnnualLeaveView() {

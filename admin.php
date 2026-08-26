@@ -478,6 +478,12 @@ $currentUserRoleName = $roleNames[$currentUser['role']] ?? $currentUser['role'];
                 <div class="section-header">
                     <h2 class="section-title">전체 휴가 현황</h2>
                 </div>
+                <div class="filter-group" style="margin-bottom:12px;">
+                    <button class="btn btn-sm btn-primary" data-status="">전체</button>
+                    <button class="btn btn-sm btn-secondary" data-status="applied">신청 (미완료)</button>
+                    <button class="btn btn-sm btn-secondary" data-status="approved">승인</button>
+                    <button class="btn btn-sm btn-secondary" data-status="cancelled">취소</button>
+                </div>
                 <div class="section-body">
                     <div class="table-wrapper">
                         <table>
