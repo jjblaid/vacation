@@ -31,7 +31,7 @@ require_once __DIR__ . '/config/security.php';
         .info-box-gray { background:#f1f5f9; }
         .info-box-blue { background:#e0e7ff; }
         .info-box-notice { margin-bottom:12px; padding:10px; background:#fff3cd; border:1px solid #ffeeba; border-radius:6px; font-size:13px; color:#856404; }
-        .select-half { padding:8px; border-radius:6px; border:1px solid #ddd; }
+        .select-half { padding:8px; border-radius:6px; border:1px solid #ddd; min-width:70px; }
         .phone-input { flex:1; }
         .btn-flex-1 { flex:1; }
         .fw-600 { font-weight:600; }
