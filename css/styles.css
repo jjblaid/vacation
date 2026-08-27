@@ -683,6 +683,19 @@ tr:hover {
         max-width: 100%;
         margin: 10px;
     }
+    
+    .section-body .table-wrapper table th,
+    .section-body .table-wrapper table td {
+        padding: 6px 8px;
+        font-size: 11px;
+    }
+    .section-body .table-wrapper table td:not(.actions) {
+        white-space: nowrap;
+    }
+    .table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
 }
 
 /* Utility classes */
