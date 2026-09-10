@@ -4,6 +4,7 @@ let condolenceTypes = [];
 let holidays = [];
 const _pageParams = {};
 const ENABLE_CANCEL_BUTTON = true; // false → 취소 버튼 숨김
+const ENABLE_CUSTOM_PRINT_DATE = false; // true → 출력 날짜 지정 모달 팝업, false → 신청일로 직행 출력
 
 document.addEventListener('click', function(e) {
     const el = e.target.closest('[data-action]');
@@ -579,11 +580,15 @@ async function cancelRequest(id) {
 }
 
 function printRequest(id, createdAt) {
-    document.getElementById('printRequestId').value = id;
-    document.getElementById('printCreatedDate').textContent = createdAt || new Date().toISOString().split('T')[0];
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('printSignDate').value = today;
-    document.getElementById('printDateModal').classList.remove('hidden');
+    if (ENABLE_CUSTOM_PRINT_DATE) {
+        document.getElementById('printRequestId').value = id;
+        document.getElementById('printCreatedDate').textContent = createdAt || new Date().toISOString().split('T')[0];
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('printSignDate').value = today;
+        document.getElementById('printDateModal').classList.remove('hidden');
+    } else {
+        window.open(`print.php?id=${id}`, 'printWindow', 'width=800,height=600,scrollbars=yes');
+    }
 }
 
 function toggleAnnualLeaveView() {

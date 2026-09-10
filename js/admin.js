@@ -6,6 +6,7 @@ let vacationTypes = [];
 let allRequests = [];
 let positions = [];
 let annualLeaveData = [];
+const ENABLE_CUSTOM_PRINT_DATE = false; // true → 출력 날짜 지정 모달 팝업, false → 신청일로 직행 출력
 
 document.addEventListener('click', function(e) {
     const el = e.target.closest('[data-action]');
@@ -26,11 +27,15 @@ document.addEventListener('click', function(e) {
         case 'editDepartment': editDepartment(a.id); break;
         case 'deleteDepartment': deleteDepartment(a.id); break;
         case 'printRequest': {
-            document.getElementById('printRequestId').value = a.id;
-            document.getElementById('printCreatedDate').textContent = a.created || new Date().toISOString().split('T')[0];
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('printSignDate').value = today;
-            document.getElementById('printDateModal').classList.remove('hidden');
+            if (ENABLE_CUSTOM_PRINT_DATE) {
+                document.getElementById('printRequestId').value = a.id;
+                document.getElementById('printCreatedDate').textContent = a.created || new Date().toISOString().split('T')[0];
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('printSignDate').value = today;
+                document.getElementById('printDateModal').classList.remove('hidden');
+            } else {
+                window.open(`print.php?id=${a.id}`, '_blank');
+            }
             break;
         }
         case 'editAnnualLeave': editAnnualLeave(a.id); break;

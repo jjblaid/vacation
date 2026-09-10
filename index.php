@@ -291,7 +291,7 @@ require_once __DIR__ . '/config/security.php';
                 <p id="supportNotice" class="info-box-notice"></p>
                 <div class="form-group">
                     <label>요청사항</label>
-                    <textarea id="supportContent" rows="5" class="w-full-input text-sm-14" placeholder="요청 내용을 입력해주세요&#10;예: 사원증 재발급 / 명함 100매 / A4 용지 2박스"></textarea>
+                    <textarea id="supportContent" rows="5" class="w-full-input text-sm-14" placeholder="요청 내용을 입력해주세요&#10;예: 사원증 재발급 / 명함 1통 / A4 용지 2박스"></textarea>
                 </div>
             </div>
             <div class="modal-footer">

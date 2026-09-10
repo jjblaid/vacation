@@ -22,7 +22,7 @@ $request = $stmt->fetch();
 if (!$request) { die('요청을 찾을 수 없습니다.'); }
 $startDate = date('Y년 m월 d일', strtotime($request['start_date']));
 $endDate   = date('Y년 m월 d일', strtotime($request['end_date']));
-$signDate = $_GET['sign_date'] ?? $request['created_at'];
+$signDate = !empty($_GET['sign_date']) ? $_GET['sign_date'] : $request['created_at'];
 $createdDate = date('Y년  m월  d일', strtotime($signDate));
 
 // 요일 변환
