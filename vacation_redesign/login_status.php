@@ -1,0 +1,165 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'system_admin') {
+    http_response_code(403);
+    echo '<!DOCTYPE html><html><head><meta charset="utf-8"><title>접근 불가</title></head><body><h1>403 Forbidden</h1><p>권한이 없습니다.</p><a href="index.php">로그인 페이지로 이동</a></body></html>';
+    exit;
+}
+
+require_once 'config/security.php';
+require_once 'config/database.php';
+
+$view = $_GET['view'] ?? 'active';
+$year = intval($_GET['year'] ?? date('Y'));
+$month = intval($_GET['month'] ?? date('n'));
+$db = getDB();
+
+if ($view === 'all') {
+    $stmt = $db->prepare("SELECT * FROM login_log WHERE YEAR(login_at) = ? AND MONTH(login_at) = ? ORDER BY login_at DESC");
+    $stmt->execute([$year, $month]);
+} else {
+    $stmt = $db->prepare("SELECT * FROM login_log WHERE logout_at IS NULL AND last_activity > DATE_SUB(NOW(), INTERVAL 30 MINUTE) ORDER BY login_at DESC");
+    $stmt->execute();
+}
+$sessions = $stmt->fetchAll();
+
+$roleNames = [
+    'system_admin' => '시스템관리자',
+    'reviewer' => '검토자',
+    'dept_manager' => '관리자',
+    'ceo' => '대표이사',
+    'vice_president' => '부대표',
+    'user' => '사용자'
+];
+
+$isActiveView = $view !== 'all';
+
+function selected($a, $b) { return $a == $b ? 'selected' : ''; }
+?>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<?php if ($isActiveView): ?>
+    <meta http-equiv="refresh" content="15">
+<?php endif; ?>
+    <title><?= $isActiveView ? '현재 접속자' : '접속 이력' ?></title>
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <style nonce="<?= $cspNonce ?>">
+        body { background: #F1F5F9; padding: 32px; }
+        .container { max-width: 1100px; margin: 0 auto; }
+        .count { font-size: 14px; color: #64748B; }
+        .count em { font-style: normal; font-weight: 700; color: #14B8A6; }
+        .ip { font-family: monospace; font-size: 13px; color: #64748B; }
+        .time { font-size: 13px; color: #64748B; white-space: nowrap; }
+        .now { color: #22C55E; font-weight: 600; }
+        .header-info { display: flex; align-items: center; gap: 12px; }
+        .header-info .user { font-size: 13px; color: #64748B; }
+        .tabs { display: flex; gap: 0; margin-bottom: 0; }
+        .tabs a { display: inline-block; padding: 10px 20px; border-radius: 8px 8px 0 0; font-size: 14px; font-weight: 600; text-decoration: none; color: #94A3B8; background: #E2E8F0; transition: all 0.15s; }
+        .tabs a.active { color: #0F172A; background: #fff; }
+        .tabs a:hover:not(.active) { background: #CBD5E1; }
+        .status-logout { background: #FEF2F2; color: #DC2626; }
+        .section-header-center { padding-bottom:0; border-bottom:none; flex-direction:column; align-items:stretch; }
+        .header-flex { display:flex; align-items:center; justify-content:space-between; padding:0 24px 16px; }
+        .tabs-pad { padding:0 24px; }
+        .filter-form { display:flex; gap:6px; margin-left:auto; }
+        .filter-select { padding:6px 10px; border-radius:8px; border:1px solid #E2E8F0; font-size:13px; }
+        .empty-cell { text-align:center; color:#94A3B8; }
+        .count-mt { margin-top:16px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="section">
+            <div class="section-header section-header-center">
+                <div class="header-flex">
+                    <div class="header-info">
+                        <h2 class="section-title"><?= $isActiveView ? '🟢 현재 접속자' : '📋 접속 이력' ?></h2>
+                        <span class="count">총 <em><?= count($sessions) ?></em>건</span>
+                    </div>
+                    <div class="header-info">
+                        <span class="user"><?= htmlspecialchars($_SESSION['user']['name']) ?>님</span>
+                        <a href="index.php" class="btn btn-sm btn-secondary">메인으로</a>
+                        <a href="admin.php" class="btn btn-sm btn-secondary">관리자</a>
+                        <button id="btnRefresh" class="btn btn-sm btn-secondary">🔄 새로고침</button>
+                    </div>
+                </div>
+                <div class="tabs tabs-pad">
+                    <a href="login_status.php" class="<?= $isActiveView ? 'active' : '' ?>">🟢 현재 접속자</a>
+                    <a href="login_status.php?view=all" class="<?= !$isActiveView ? 'active' : '' ?>">📋 전체 이력</a>
+<?php if (!$isActiveView): ?>
+                    <form method="get" action="login_status.php" class="filter-form">
+                        <input type="hidden" name="view" value="all">
+                        <select id="filterYear" name="year" class="filter-select">
+<?php for ($y = intval(date('Y')); $y >= intval(date('Y')) - 5; $y--): ?>
+                            <option value="<?= $y ?>" <?= selected($y, $year) ?>><?= $y ?>년</option>
+<?php endfor; ?>
+                        </select>
+                        <select id="filterMonth" name="month" class="filter-select">
+<?php for ($m = 1; $m <= 12; $m++): ?>
+                            <option value="<?= $m ?>" <?= selected($m, $month) ?>><?= $m ?>월</option>
+<?php endfor; ?>
+                        </select>
+                    </form>
+<?php endif; ?>
+                </div>
+            </div>
+            <div class="section-body">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>이름</th>
+                                <th>아이디</th>
+                                <th>권한</th>
+                                <th>IP 주소</th>
+                                <th>로그인 시간</th>
+                                <th>마지막 활동</th>
+<?php if (!$isActiveView): ?>
+                                <th>로그아웃 시간</th>
+                                <th>상태</th>
+<?php endif; ?>
+                            </tr>
+                        </thead>
+                        <tbody>
+<?php if (count($sessions) === 0): ?>
+                            <tr><td colspan="<?= $isActiveView ? 6 : 8 ?>" class="empty-cell"><?= $isActiveView ? '접속 중인 사용자가 없습니다.' : "{$year}년 {$month}월 접속 기록이 없습니다." ?></td></tr>
+<?php else: ?>
+<?php foreach ($sessions as $s): ?>
+<?php $isLoggedOut = $s['logout_at'] !== null; ?>
+                            <tr>
+                                <td><strong><?= htmlspecialchars($s['name']) ?></strong></td>
+                                <td><?= htmlspecialchars($s['emp_no']) ?></td>
+                                <td><span class="status-badge <?= $isLoggedOut ? 'status-cancelled' : 'status-active' ?>"><?= htmlspecialchars($roleNames[$s['role']] ?? $s['role']) ?></span></td>
+                                <td class="ip"><?= htmlspecialchars($s['ip_address'] ?? '-') ?></td>
+                                <td class="time"><?= htmlspecialchars($s['login_at']) ?></td>
+                                <td class="time"><?= htmlspecialchars($s['last_activity']) ?></td>
+<?php if (!$isActiveView): ?>
+                                <td class="time"><?= $isLoggedOut ? htmlspecialchars($s['logout_at']) : '-' ?></td>
+                                <td><span class="status-badge <?= $isLoggedOut ? 'status-cancelled' : 'status-active' ?>"><?= $isLoggedOut ? '로그아웃' : '접속중' ?></span></td>
+<?php endif; ?>
+                            </tr>
+<?php endforeach; ?>
+<?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+<?php if ($isActiveView): ?>
+                <p class="count count-mt">※ 30분 이상 활동이 없거나 로그아웃한 사용자는 자동으로 목록에서 제외됩니다.</p>
+<?php else: ?>
+                <p class="count count-mt">※ <strong><?= $year ?>년 <?= $month ?>월</strong>의 모든 로그인/로그아웃 기록을 표시합니다. 연도/월을 선택하여 다른 기간을 조회할 수 있습니다.</p>
+<?php endif; ?>
+            </div>
+        </div>
+    </div>
+<script nonce="<?= $cspNonce ?>">
+document.getElementById('btnRefresh').addEventListener('click', () => location.reload());
+document.getElementById('filterYear').addEventListener('change', function() { this.form.submit(); });
+document.getElementById('filterMonth').addEventListener('change', function() { this.form.submit(); });
+</script>
+</body>
+</html>

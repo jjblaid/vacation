@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADF 휴가신청 시스템 - 디자인 프리뷰</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ===== NEW DESIGN SYSTEM - Navy/Gray Theme ===== */
+        :root {
+            --primary: #0f2541;
+            --primary-dark: #0a1a30;
+            --primary-light: #1a3a5c;
+            --gray: #7e8b9b;
+            --gray-light: #b0bac6;
+            --bg-main: #f4f7f9;
+            --bg-card: #ffffff;
+            --text-main: #1a1a2e;
+            --text-sub: #555555;
+            --text-muted: #8a8f9a;
+            --border: #dbe2eb;
+            --success: #0f9b58;
+            --success-light: #d4f5e2;
+            --warning: #d97706;
+            --warning-light: #fef3c7;
+            --danger: #dc2626;
+            --danger-light: #fecaca;
+            --info: #2563eb;
+            --info-light: #dbeafe;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+            --shadow: 0 2px 8px rgba(0,0,0,0.04);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,0.08);
+            --radius: 8px;
+            --radius-lg: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            background: var(--primary);
+            color: #ffffff;
+            padding: 0 24px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-logo {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 24px;
+            font-size: 14px;
+            opacity: 0.85;
+        }
+
+        .header-nav a {
+            color: #fff;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .header-nav a:hover {
+            opacity: 1;
+        }
+
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 14px;
+        }
+
+        .header-user-info {
+            text-align: right;
+        }
+
+        .header-user-name {
+            font-weight: 600;
+        }
+
+        .header-user-role {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        /* ===== CONTAINER ===== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* ===== CARDS (Summary Row) ===== */
+        .summary-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .summary-card {
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .summary-card.navy {
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        .summary-card.gray {
+            background: var(--gray);
+            color: #ffffff;
+        }
+
+        .summary-card.white {
+            background: #ffffff;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+
+        .summary-card .card-label {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .summary-card.white .card-label {
+            color: var(--text-sub);
+            opacity: 1;
+        }
+
+        .summary-card .card-value {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .summary-card .card-value span {
+            font-size: 14px;
+            font-weight: 400;
+            opacity: 0.8;
+        }
+
+        /* ===== SECTION BOX ===== */
+        .section-box {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .section-body {
+            padding: 20px;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-main);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: #ffffff;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: #ffffff;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        /* ===== TABLE ===== */
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th {
+            background: #fafafa;
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 500;
+            color: var(--text-sub);
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-main);
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        /* ===== STATUS BADGES ===== */
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .badge-navy {
+            background: #e8edf4;
+            color: var(--primary);
+        }
+
+        .badge-success {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .badge-danger {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .badge-warning {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .badge-gray {
+            background: #f1f5f9;
+            color: var(--text-sub);
+        }
+
+        /* ===== FORM ELEMENTS ===== */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            color: var(--text-main);
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(15,37,65,0.08);
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23555' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 32px;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+        }
+
+        /* ===== TABS ===== */
+        .tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 10px 18px;
+            background: none;
+            border: none;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.15s;
+            white-space: nowrap;
+            font-family: inherit;
+        }
+
+        .tab:hover {
+            color: var(--text-main);
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal {
+            background: #ffffff;
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 440px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--text-muted);
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+
+        .modal-close:hover {
+            background: var(--bg-main);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 14px 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* ===== LEGEND ===== */
+        .legend {
+            display: flex;
+            gap: 20px;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+        }
+
+        .legend-dot.green { background: #dcfce7; border: 1px solid #166534; }
+        .legend-dot.red { background: #fee2e2; border: 1px solid #dc2626; }
+
+        /* ===== INFO BOX ===== */
+        .info-box {
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .info-box.gray {
+            background: #f1f5f9;
+            color: var(--text-main);
+        }
+
+        .info-box.blue {
+            background: #e8edf4;
+            color: var(--primary);
+        }
+
+        .info-box.warning {
+            background: var(--warning-light);
+            color: #92400e;
+        }
+
+        /* ===== FILTER BAR ===== */
+        .filter-bar {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .actions {
+            display: flex;
+            gap: 4px;
+            white-space: nowrap;
+        }
+
+        td, th {
+            white-space: nowrap;
+        }
+
+        .filter-select {
+            padding: 7px 32px 7px 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: inherit;
+            color: var(--text-main);
+            background: #fff;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23555' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+        }
+
+        /* ===== CHECKBOX ===== */
+        .checkbox-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            color: var(--text-sub);
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        /* ===== SECTION LAYOUT ===== */
+        .section-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        /* ===== DIVIDER ===== */
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 16px 0;
+        }
+
+        /* ===== SECTION TITLE AREA ===== */
+        .section-title-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .section-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== MOBILE (max-width: 768px) ===== */
+        @media (max-width: 768px) {
+            .summary-row {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .summary-card {
+                padding: 14px;
+            }
+
+            .summary-card .card-label {
+                font-size: 12px;
+                margin-bottom: 4px;
+            }
+
+            .summary-card .card-value {
+                font-size: 20px;
+            }
+
+            .summary-card .card-value span {
+                font-size: 12px;
+            }
+
+            .header {
+                height: auto;
+                padding: 10px 16px;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .header-logo {
+                font-size: 14px;
+            }
+
+            .header-nav {
+                display: none;
+            }
+
+            .header-user {
+                gap: 8px;
+                font-size: 12px;
+            }
+
+            .header-user-name {
+                font-size: 12px;
+            }
+
+            .header-user-role {
+                font-size: 10px;
+            }
+
+            .container {
+                padding: 12px;
+            }
+
+            /* Table - 전체 축소 */
+            table {
+                font-size: 11px;
+            }
+
+            th, td {
+                padding: 8px 6px;
+                white-space: nowrap;
+            }
+
+            th {
+                font-size: 10px;
+            }
+
+            /* Section */
+            .section-header {
+                padding: 12px 14px;
+            }
+
+            .section-title {
+                font-size: 13px;
+            }
+
+            .section-body {
+                padding: 12px;
+            }
+
+            /* Buttons */
+            .btn {
+                padding: 6px 10px;
+                font-size: 11px;
+                border-radius: 6px;
+            }
+
+            .btn-sm {
+                padding: 4px 8px;
+                font-size: 10px;
+            }
+
+            /* Badges */
+            .badge {
+                padding: 2px 6px;
+                font-size: 9px;
+            }
+
+            /* Filter bar */
+            .filter-select {
+                padding: 5px 24px 5px 8px;
+                font-size: 11px;
+                background-position: right 6px center;
+                background-size: 8px;
+            }
+
+            .filter-bar {
+                gap: 6px;
+            }
+
+            /* Tabs */
+            .tab {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            /* Legend */
+            .legend {
+                font-size: 10px;
+                gap: 12px;
+                margin-top: 8px;
+            }
+
+            /* Calendar */
+            .cal-cell {
+                min-height: 40px;
+                padding: 2px 3px;
+            }
+
+            .cal-cell .day-num {
+                font-size: 10px;
+            }
+
+            .cal-cell .cal-event {
+                font-size: 7px;
+                padding: 0 2px;
+            }
+
+            .cal-header {
+                padding: 5px 0;
+                font-size: 10px;
+            }
+
+            /* Info box */
+            .info-box {
+                padding: 7px 10px;
+                font-size: 11px;
+            }
+
+            /* Form */
+            .form-group label {
+                font-size: 12px;
+                margin-bottom: 4px;
+            }
+
+            .form-control {
+                padding: 8px 10px;
+                font-size: 13px;
+            }
+
+            .form-group {
+                margin-bottom: 12px;
+            }
+
+            /* Checkbox */
+            .checkbox-label {
+                font-size: 11px;
+            }
+
+            /* Modal */
+            .modal {
+                max-width: 100%;
+            }
+
+            .modal-header {
+                padding: 12px 16px;
+            }
+
+            .modal-body {
+                padding: 14px;
+            }
+
+            .modal-footer {
+                padding: 10px 16px;
+            }
+
+            .modal-title {
+                font-size: 14px;
+            }
+
+            /* Pagination */
+            .pagination .btn-sm {
+                padding: 4px 7px;
+                font-size: 10px;
+            }
+        }
+
+        /* ===== SMALL MOBILE (max-width: 480px) ===== */
+        @media (max-width: 480px) {
+            .summary-row {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-card {
+                padding: 12px;
+            }
+
+            .summary-card .card-label {
+                font-size: 11px;
+            }
+
+            .summary-card .card-value {
+                font-size: 18px;
+            }
+
+            table {
+                font-size: 10px;
+            }
+
+            th, td {
+                padding: 6px 4px;
+            }
+
+            th {
+                font-size: 9px;
+            }
+
+            .btn-sm {
+                padding: 3px 6px;
+                font-size: 9px;
+            }
+
+            .btn {
+                padding: 5px 8px;
+                font-size: 10px;
+            }
+
+            .badge {
+                padding: 1px 5px;
+                font-size: 8px;
+            }
+
+            .filter-select {
+                padding: 4px 20px 4px 6px;
+                font-size: 10px;
+            }
+
+            .cal-cell {
+                min-height: 32px;
+            }
+
+            .cal-cell .day-num {
+                font-size: 9px;
+            }
+
+            .cal-event {
+                display: none;
+            }
+
+            .cal-header {
+                font-size: 9px;
+                padding: 4px 0;
+            }
+
+            .legend {
+                font-size: 9px;
+                gap: 8px;
+            }
+
+            .legend-dot {
+                width: 8px;
+                height: 8px;
+            }
+
+            .section-header {
+                padding: 10px 12px;
+            }
+
+            .section-title {
+                font-size: 12px;
+            }
+
+            .tab {
+                padding: 6px 10px;
+                font-size: 11px;
+            }
+
+            .form-control {
+                padding: 7px 8px;
+                font-size: 12px;
+            }
+
+            .table-wrapper {
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+
+        /* ===== SAMPLE CALENDAR GRID ===== */
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            border-top: 1px solid var(--border);
+            border-left: 1px solid var(--border);
+        }
+
+        .cal-header {
+            background: #fafafa;
+            padding: 8px 0;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-sub);
+            border-right: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .cal-cell {
+            min-height: 60px;
+            padding: 4px 6px;
+            border-right: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+            background: #fff;
+        }
+
+        .cal-cell .day-num {
+            color: var(--text-sub);
+            margin-bottom: 2px;
+        }
+
+        .cal-cell.active .day-num {
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        .cal-cell.weekend .day-num {
+            color: var(--danger);
+        }
+
+        .cal-cell.sunday .day-num {
+            color: var(--danger);
+        }
+
+        .cal-cell.saturday .day-num {
+            color: #2563eb;
+        }
+
+        .cal-event {
+            background: var(--gray);
+            color: #fff;
+            font-size: 10px;
+            padding: 1px 4px;
+            border-radius: 2px;
+            margin-top: 1px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .cal-event.green {
+            background: #166534;
+        }
+
+        .cal-event.red {
+            background: var(--danger);
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="header">
+    <div class="header-logo">ADF 자산운용</div>
+    <div class="header-nav">
+        <a href="#">대시보드</a>
+        <a href="#">휴가 관리</a>
+        <a href="#">행정지원</a>
+    </div>
+    <div class="header-user">
+        <div class="header-user-info">
+            <div class="header-user-name">박현주</div>
+            <div class="header-user-role">시스템관리자</div>
+        </div>
+        <button class="btn btn-sm btn-secondary" style="background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.2);color:#fff;">로그아웃</button>
+    </div>
+</header>
+
+<!-- ===== CONTAINER ===== -->
+<div class="container">
+
+    <!-- Summary Cards -->
+    <div class="summary-row" id="summaryRow">
+        <div class="summary-card navy">
+            <div class="card-label">잔여 연차</div>
+            <div class="card-value">12 <span>일</span></div>
+        </div>
+        <div class="summary-card gray" id="severanceCard" style="display:none;">
+            <div class="card-label">보전연차</div>
+            <div class="card-value">3 <span>일</span></div>
+        </div>
+        <div class="summary-card white">
+            <div class="card-label">사용 연차</div>
+            <div class="card-value">3 <span>일</span></div>
+        </div>
+        <div class="summary-card white">
+            <div class="card-label">총 신청</div>
+            <div class="card-value">5 <span>건</span></div>
+        </div>
+    </div>
+
+    <!-- ===== Calendar (Full Width) ===== -->
+    <div class="section-box">
+        <div class="section-header">
+            <div class="section-title-area">
+                <span class="section-title">휴가 캘린더</span>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                <button class="btn btn-secondary btn-sm" id="btnPrintResign" style="display:none;">📄 퇴직원</button>
+                <button class="btn btn-secondary btn-sm">📋 행정지원요청 ▾</button>
+                <button class="btn btn-primary btn-sm" onclick="document.getElementById('modalDemo').style.display='flex'">+ 휴가 신청</button>
+            </div>
+        </div>
+        <div class="section-body">
+            <div class="cal-grid">
+                <div class="cal-header">일</div>
+                <div class="cal-header">월</div>
+                <div class="cal-header">화</div>
+                <div class="cal-header">수</div>
+                <div class="cal-header">목</div>
+                <div class="cal-header">금</div>
+                <div class="cal-header">토</div>
+                <div class="cal-cell sunday"><div class="day-num">1</div></div>
+                <div class="cal-cell active"><div class="day-num">2</div></div>
+                <div class="cal-cell active"><div class="day-num">3</div></div>
+                <div class="cal-cell active"><div class="day-num">4</div></div>
+                <div class="cal-cell active"><div class="day-num">5</div></div>
+                <div class="cal-cell active"><div class="day-num">6</div></div>
+                <div class="cal-cell saturday"><div class="day-num">7</div></div>
+                <div class="cal-cell sunday"><div class="day-num">8</div></div>
+                <div class="cal-cell active"><div class="day-num">9</div><div class="cal-event">연차 - 김철수</div></div>
+                <div class="cal-cell active"><div class="day-num">10</div></div>
+                <div class="cal-cell active"><div class="day-num">11</div></div>
+                <div class="cal-cell active"><div class="day-num">12</div></div>
+                <div class="cal-cell active"><div class="day-num">13</div></div>
+                <div class="cal-cell saturday"><div class="day-num">14</div></div>
+                <div class="cal-cell sunday"><div class="day-num">15</div></div>
+                <div class="cal-cell active"><div class="day-num">16</div></div>
+                <div class="cal-cell active"><div class="day-num">17</div></div>
+                <div class="cal-cell active"><div class="day-num">18</div></div>
+                <div class="cal-cell active"><div class="day-num">19</div></div>
+                <div class="cal-cell active"><div class="day-num">20</div></div>
+                <div class="cal-cell saturday"><div class="day-num">21</div></div>
+                <div class="cal-cell sunday"><div class="day-num">22</div></div>
+                <div class="cal-cell active"><div class="day-num">23</div></div>
+                <div class="cal-cell active"><div class="day-num">24</div></div>
+                <div class="cal-cell active"><div class="day-num">25</div></div>
+                <div class="cal-cell active"><div class="day-num">26</div></div>
+                <div class="cal-cell active"><div class="day-num">27</div></div>
+                <div class="cal-cell saturday"><div class="day-num">28</div></div>
+                <div class="cal-cell sunday"><div class="day-num">29</div></div>
+                <div class="cal-cell active"><div class="day-num">30</div></div>
+                <div class="cal-cell active"><div class="day-num">31</div></div>
+                <div class="cal-cell" style="background:#fafafa;"></div>
+                <div class="cal-cell" style="background:#fafafa;"></div>
+                <div class="cal-cell" style="background:#fafafa;"></div>
+                <div class="cal-cell" style="background:#fafafa;"></div>
+            </div>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-dot green"></div>
+                    <span>Family Day</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot red"></div>
+                    <span>공휴일</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 휴가 신청 내역 - 일반 사용자 뷰 (Full Width) ===== -->
+    <div id="userTableView" class="section-box">
+        <div class="section-header" style="flex-direction:column;align-items:stretch;gap:10px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+                <span class="section-title">휴가 신청 내역</span>
+            </div>
+            <div class="filter-bar">
+                <select class="filter-select">
+                    <option>2026년</option>
+                    <option>2025년</option>
+                </select>
+                <select class="filter-select">
+                    <option value="">전체 월</option>
+                    <option>7월</option>
+                    <option selected>8월</option>
+                </select>
+                <label class="checkbox-label"><input type="checkbox"> 취소 내역 포함</label>
+            </div>
+        </div>
+        <div class="section-body" style="padding:0;">
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>기간</th>
+                            <th>휴가 유형</th>
+                            <th>일수</th>
+                            <th>상태</th>
+                            <th>작업</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2026-08-09 ~ 08-09</td>
+                            <td>연차</td>
+                            <td>1일</td>
+                            <td><span class="badge badge-success">완료</span></td>
+                            <td>
+                                <button class="btn btn-secondary btn-sm">출력</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2026-08-20 ~ 08-22</td>
+                            <td>연차</td>
+                            <td>3일</td>
+                            <td><span class="badge badge-navy">신청</span></td>
+                            <td style="white-space:nowrap;">
+                                <button class="btn btn-secondary btn-sm">수정</button>
+                                <button class="btn btn-secondary btn-sm" style="color:var(--danger);">취소</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2026-07-15 ~ 07-15</td>
+                            <td>반차(오후)</td>
+                            <td>0.5일</td>
+                            <td><span class="badge badge-success">완료</span></td>
+                            <td>
+                                <button class="btn btn-secondary btn-sm">출력</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2026-06-01 ~ 06-03</td>
+                            <td>연차</td>
+                            <td>3일</td>
+                            <td><span class="badge badge-danger">취소</span></td>
+                            <td>
+                                <button class="btn btn-secondary btn-sm">출력</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== VIEW TOGGLE ===== -->
+    <div class="section-box" style="background:var(--primary);color:#fff;border-color:var(--primary);">
+        <div class="section-body" style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;flex-wrap:wrap;gap:10px;">
+            <span style="font-size:14px;font-weight:600;">뷰 모드 전환 (미리보기용)</span>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                <span style="font-size:12px;opacity:0.7;">대시보드:</span>
+                <button class="btn btn-sm" style="border-radius:var(--radius) 0 0 var(--radius);background:rgba(255,255,255,0.35);color:#fff;border:1px solid rgba(255,255,255,0.3);" id="btnNormal" onclick="switchDash('normal')">일반 사용자</button>
+                <button class="btn btn-sm" style="border-radius:0 var(--radius) var(--radius) 0;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.3);" id="btnResigning" onclick="switchDash('resigning')">퇴사예정자</button>
+                <span style="font-size:12px;opacity:0.7;margin-left:8px;">테이블:</span>
+                <button class="btn btn-sm" style="border-radius:var(--radius) 0 0 var(--radius);background:rgba(255,255,255,0.35);color:#fff;border:1px solid rgba(255,255,255,0.3);" id="btnUserView" onclick="switchView('user')">일반</button>
+                <button class="btn btn-sm" style="border-radius:0 var(--radius) var(--radius) 0;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.3);" id="btnAdminView" onclick="switchView('admin')">관리자</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 휴가 신청 내역 - 관리자 확장 뷰 ===== -->
+    <div id="adminTableView" class="section-box" style="display:none;">
+        <div class="section-header" style="flex-direction:column;align-items:stretch;gap:12px;">
+            <!-- Title row -->
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div class="section-title-area">
+                    <span class="section-title">휴가 신청 내역</span>
+                    <label class="checkbox-label"><input type="checkbox"> 내 휴가만 보기</label>
+                </div>
+                <label class="checkbox-label"><input type="checkbox"> 취소 내역 포함</label>
+            </div>
+            <!-- Filter row 1: 본부 + 사원 -->
+            <div class="filter-bar">
+                <select class="filter-select">
+                    <option value="">전체 본부</option>
+                    <option>경영지원본부</option>
+                    <option>투자본부</option>
+                    <option>운용본부</option>
+                </select>
+                <select class="filter-select">
+                    <option value="">전체 사원</option>
+                    <option>홍길동</option>
+                    <option>김철수</option>
+                    <option>이영희</option>
+                    <option>박영수</option>
+                    <option>최대표</option>
+                    <option>정부대표</option>
+                </select>
+            </div>
+            <!-- Filter row 2: 연도 + 월 + 상태 -->
+            <div class="filter-bar">
+                <select class="filter-select">
+                    <option>2026년</option>
+                    <option>2025년</option>
+                </select>
+                <select class="filter-select">
+                    <option value="">전체 월</option>
+                    <option>1월</option><option>2월</option><option>3월</option>
+                    <option>4월</option><option>5월</option><option>6월</option>
+                    <option selected>7월</option><option>8월</option><option>9월</option>
+                    <option>10월</option><option>11월</option><option>12월</option>
+                </select>
+                <select class="filter-select">
+                    <option value="">전체 상태</option>
+                    <option>신청 (미완료)</option>
+                    <option>승인 (완료)</option>
+                    <option>취소</option>
+                </select>
+            </div>
+        </div>
+        <div class="section-body" style="padding:0;">
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>사원</th>
+                            <th>부서</th>
+                            <th>기간</th>
+                            <th>유형</th>
+                            <th>일수</th>
+                            <th>상태</th>
+                            <th>작업</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- 승인된 건 -->
+                        <tr>
+                            <td><strong>홍길동</strong></td>
+                            <td><span class="color-dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#0f9b58;margin-right:4px;vertical-align:middle;"></span>개발팀</td>
+                            <td>2026-08-09 ~ 08-09</td>
+                            <td>연차</td>
+                            <td>1일</td>
+                            <td><span class="badge badge-success">완료</span></td>
+                            <td>
+                                <button class="btn btn-secondary btn-sm">출력</button>
+                            </td>
+                        </tr>
+                        <!-- 신청 중 - 관리자 승인 가능 -->
+                        <tr>
+                            <td><strong>이영희</strong></td>
+                            <td><span class="color-dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#2563eb;margin-right:4px;vertical-align:middle;"></span>영업팀</td>
+                            <td>2026-08-20 ~ 08-22</td>
+                            <td>연차</td>
+                            <td>3일</td>
+                            <td><span class="badge badge-navy">신청</span></td>
+                            <td style="white-space:nowrap;">
+                                <button class="btn btn-success btn-sm">완료</button>
+                                <button class="btn btn-secondary btn-sm" style="color:var(--danger);">취소</button>
+                            </td>
+                        </tr>
+                        <!-- 승인된 건 -->
+                        <tr>
+                            <td><strong>박영수</strong></td>
+                            <td><span class="color-dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#d97706;margin-right:4px;vertical-align:middle;"></span>기획팀</td>
+                            <td>2026-08-14 ~ 08-14</td>
+                            <td>반차(오후)</td>
+                            <td>0.5일</td>
+                            <td><span class="badge badge-success">완료</span></td>
+                            <td>
+                                <button class="btn btn-secondary btn-sm">출력</button>
+                            </td>
+                        </tr>
+                        <!-- 신청 중 -->
+                        <tr>
+                            <td><strong>김철수</strong></td>
+                            <td><span class="color-dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#7e8b9b;margin-right:4px;vertical-align:middle;"></span>인사팀</td>
+                            <td>2026-08-28 ~ 08-29</td>
+                            <td>연차</td>
+                            <td>2일</td>
+                            <td><span class="badge badge-navy">신청</span></td>
+                            <td style="white-space:nowrap;">
+                                <button class="btn btn-success btn-sm">완료</button>
+                                <button class="btn btn-secondary btn-sm" style="color:var(--danger);">취소</button>
+                            </td>
+                        </tr>
+                        <!-- 승인된 건 -->
+                        <tr>
+                            <td><strong>최대표</strong></td>
+                            <td><span class="color-dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#dc2626;margin-right:4px;vertical-align:middle;"></span>대표이사</td>
+                            <td>2026-08-01 ~ 08-03</td>
+                            <td>연차</td>
+                            <td>3일</td>
+                            <td><span class="badge badge-success">완료</span></td>
+                            <td>
+                                <button class="btn btn-secondary btn-sm">출력</button>
+                            </td>
+                        </tr>
+                        <!-- 승인된 건 -->
+                        <tr>
+                            <td><strong>정부대표</strong></td>
+                            <td><span class="color-dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#6b21a8;margin-right:4px;vertical-align:middle;"></span>경영지원팀</td>
+                            <td>2026-08-11 ~ 08-11</td>
+                            <td>반차(오전)</td>
+                            <td>0.5일</td>
+                            <td><span class="badge badge-success">완료</span></td>
+                            <td>
+                                <button class="btn btn-secondary btn-sm">출력</button>
+                            </td>
+                        </tr>
+                        <!-- 취소된 건 (취소내역 포함 체크 시) -->
+                        <tr style="opacity:0.6;">
+                            <td><strong>안지훈</strong></td>
+                            <td><span class="color-dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#0f2541;margin-right:4px;vertical-align:middle;"></span>마케팅팀</td>
+                            <td>2026-07-05 ~ 07-07</td>
+                            <td>연차</td>
+                            <td>3일</td>
+                            <td><span class="badge badge-danger">취소</span></td>
+                            <td>
+                                <button class="btn btn-secondary btn-sm">출력</button>
+                            </td>
+                        </tr>
+                        <!-- 신청 중 -->
+                        <tr>
+                            <td><strong>한소영</strong></td>
+                            <td><span class="color-dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#166534;margin-right:4px;vertical-align:middle;"></span>운용팀</td>
+                            <td>2026-09-01 ~ 09-03</td>
+                            <td>연차</td>
+                            <td>3일</td>
+                            <td><span class="badge badge-navy">신청</span></td>
+                            <td style="white-space:nowrap;">
+                                <button class="btn btn-success btn-sm">완료</button>
+                                <button class="btn btn-secondary btn-sm" style="color:var(--danger);">취소</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- Pagination -->
+            <div style="display:flex;justify-content:center;gap:4px;padding:16px;">
+                <button class="btn btn-sm btn-secondary">&lt;&lt;</button>
+                <button class="btn btn-sm btn-secondary">&lt;</button>
+                <button class="btn btn-sm btn-primary">1</button>
+                <button class="btn btn-sm btn-secondary">2</button>
+                <button class="btn btn-sm btn-secondary">3</button>
+                <button class="btn btn-sm btn-secondary">&gt;</button>
+                <button class="btn btn-sm btn-secondary">&gt;&gt;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs Example -->
+    <div class="section-box">
+        <div class="section-body">
+            <div class="tabs">
+                <button class="tab active">전체</button>
+                <button class="tab">신청 (미완료)</button>
+                <button class="tab">승인</button>
+                <button class="tab">취소</button>
+            </div>
+            <p style="font-size:13px;color:var(--text-muted);">여기에 해당 탭의 콘텐츠가 표시됩니다.</p>
+        </div>
+    </div>
+
+    <!-- Modal (실제 화면에서 캘린더 상단 '+ 휴가 신청' 버튼 클릭 시 표시됨) -->
+    <div class="modal-overlay" id="modalDemo" style="display:none;" onclick="if(event.target===this)this.style.display='none'">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title">휴가 신청</span>
+                <button class="modal-close" onclick="document.getElementById('modalDemo').style.display='none'">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>휴가 유형</label>
+                    <select class="form-control">
+                        <option>선택하세요</option>
+                        <option>연차</option>
+                        <option>반차(오전)</option>
+                        <option>반차(오후)</option>
+                        <option>경조사</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>시작일</label>
+                    <div style="display:flex;gap:8px;align-items:center;">
+                        <input type="date" class="form-control">
+                        <select class="filter-select" style="min-width:80px;">
+                            <option>종일</option>
+                            <option>오후</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>종료일</label>
+                    <div style="display:flex;gap:8px;align-items:center;">
+                        <input type="date" class="form-control">
+                        <select class="filter-select" style="min-width:80px;">
+                            <option>종일</option>
+                            <option>오전</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>일수</label>
+                    <div class="info-box gray">0일</div>
+                </div>
+                <div class="form-group">
+                    <label>잔여 일수</label>
+                    <div class="info-box blue">12일</div>
+                </div>
+                <div class="form-group">
+                    <label>비상연락처</label>
+                    <div style="display:flex;gap:8px;">
+                        <input type="tel" class="form-control" placeholder="010-0000-0000" style="flex:1;">
+                        <input type="tel" class="form-control" placeholder="02-0000-0000" style="flex:1;">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>사유</label>
+                    <textarea class="form-control" rows="3" placeholder="휴가 사유를 입력해주세요"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="document.getElementById('modalDemo').style.display='none'">취소</button>
+                <button class="btn btn-primary" onclick="document.getElementById('modalDemo').style.display='none'">신청하기</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function switchDash(mode) {
+    const severanceCard = document.getElementById('severanceCard');
+    const btnNormal = document.getElementById('btnNormal');
+    const btnResigning = document.getElementById('btnResigning');
+
+    if (mode === 'resigning') {
+        severanceCard.style.display = 'block';
+        btnResigning.style.background = 'rgba(255,255,255,0.35)';
+        btnResigning.style.color = '#fff';
+        btnNormal.style.background = 'rgba(255,255,255,0.08)';
+        btnNormal.style.color = 'rgba(255,255,255,0.6)';
+    } else {
+        severanceCard.style.display = 'none';
+        btnNormal.style.background = 'rgba(255,255,255,0.35)';
+        btnNormal.style.color = '#fff';
+        btnResigning.style.background = 'rgba(255,255,255,0.08)';
+        btnResigning.style.color = 'rgba(255,255,255,0.6)';
+    }
+}
+
+function switchView(mode) {
+    const adminTable = document.getElementById('adminTableView');
+    const userTable = document.getElementById('userTableView');
+    const btnUser = document.getElementById('btnUserView');
+    const btnAdmin = document.getElementById('btnAdminView');
+
+    const btnPrintResign = document.getElementById('btnPrintResign');
+    const btnSupportMenu = document.querySelector('.section-header .btn-secondary');
+
+    if (mode === 'admin') {
+        adminTable.style.display = 'block';
+        userTable.style.display = 'none';
+        btnAdmin.style.background = 'rgba(255,255,255,0.35)';
+        btnAdmin.style.color = '#fff';
+        btnAdmin.style.color = '#fff';
+        btnUser.style.background = 'rgba(255,255,255,0.08)';
+        btnUser.style.color = 'rgba(255,255,255,0.6)';
+        btnPrintResign.style.display = 'inline-flex';
+        btnSupportMenu.style.display = 'none';
+    } else {
+        adminTable.style.display = 'none';
+        userTable.style.display = 'block';
+        btnUser.style.background = 'rgba(255,255,255,0.35)';
+        btnUser.style.color = '#fff';
+        btnAdmin.style.background = 'rgba(255,255,255,0.08)';
+        btnAdmin.style.color = 'rgba(255,255,255,0.6)';
+        btnPrintResign.style.display = 'none';
+        btnSupportMenu.style.display = 'inline-flex';
+    }
+}
+</script>
+
+</body>
+</html>

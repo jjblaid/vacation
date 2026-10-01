@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADF 자산운용 - 휴가신청 및 연차관리 시스템</title>
+    <link href="https://googleapis.com" rel="stylesheet">
+    <style>
+        /* 이미지의 ADF 자산운용 전용 컬러 시스템 정의 */
+        :root {
+            --bg-main: #f4f7f9;
+            --bg-sidebar: #ffffff;
+            --adf-navy: #0f2541;       /* 상단바 및 메인 카드용 딥 네이비 */
+            --adf-gray: #7e8b9b;       /* 서브 카드 및 텍스트용 미디엄 그레이 */
+            --adf-light-gray: #eef2f6; /* 활성화 메뉴 및 배경용 연한 그레이 */
+            --text-main: #333333;
+            --text-sub: #666666;
+            --border-color: #dbe2eb;
+            --status-blue: #1b3a61;
+            --status-gray: #555555;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* 전체 레이아웃 구획: 사이드바 + 메인 콘텐츠 */
+        .wrapper {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 1. 좌측 사이드바 디자인 */
+        .sidebar {
+            width: 240px;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .user-profile {
+            background-color: #fff;
+            border: 1px solid var(--border-color);
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .user-profile:hover {
+            background-color: var(--bg-main);
+        }
+
+        .menu-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            list-style: none;
+        }
+
+        .menu-item {
+            padding: 12px 14px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-sub);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s;
+        }
+
+        .menu-item.active {
+            background-color: var(--adf-light-gray);
+            color: var(--adf-navy);
+            font-weight: 700;
+        }
+
+        .menu-item:hover:not(.active) {
+            background-color: #fafbfc;
+            color: var(--text-main);
+        }
+
+        /* 2. 우측 메인 콘텐츠 영역 (상단바 포함) */
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* 최상단 지인 네이비 GNB 바 */
+        .top-navbar {
+            height: 60px;
+            background-color: var(--adf-navy);
+            color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+        }
+
+        .top-navbar .logo {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .top-navbar .nav-links {
+            display: flex;
+            gap: 24px;
+            font-size: 14px;
+            list-style: none;
+            opacity: 0.8;
+        }
+
+        .top-navbar .user-util {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 14px;
+        }
+
+        /* 실제 대시보드 내부 스크롤 영역 */
+        .content-body {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* 3. 대시보드 상단 요약 카드 (이미지 형태 반영) */
+        .summary-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .summary-card {
+            border-radius: 8px;
+            padding: 24px;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .summary-card.navy {
+            background-color: var(--adf-navy);
+        }
+
+        .summary-card.gray {
+            background-color: var(--adf-gray);
+        }
+
+        .summary-card.white {
+            background-color: #ffffff;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+
+        .summary-card .card-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+            display: block;
+        }
+        
+        .summary-card.white .card-label {
+            color: var(--text-sub);
+        }
+
+        .summary-card .card-value {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        /* 4. 하단 콘텐츠 2열 분할 (캘린더 + 내역 테이블) */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .block-box {
+            background-color: #ffffff;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+
+        .block-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .block-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .btn-action {
+            background-color: var(--adf-navy);
+            color: #fff;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        /* 5. 이미지 매핑 구체화 달력(캘린더) */
+        .cal-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .cal-controls button {
+            padding: 2px 8px;
+            border: 1px solid var(--border-color);
+            background: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            border-top: 1px solid var(--border-color);
+            border-left: 1px solid var(--border-color);
+        }
+
+        .cal-cell {
+            min-height: 52px;
+            padding: 6px;
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            font-size: 12px;
+            background-color: #fff;
+        }
+
+        .cal-cell.day-name {
+            min-height: auto;
+            background-color: #fafafa;
+            text-align: center;
+            font-weight: 500;
+            padding: 8px 0;
+        }
+
+        .cal-cell .num {
+            color: var(--text-sub);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .cal-cell.active-month .num {
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        .cal-cell .event-bar {
+            background-color: var(--adf-gray);
+            color: #fff;
+            font-size: 10px;
+            padding: 2px 4px;
+            border-radius: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top: 2px;
+        }
+
+        /* 6. 이미지 매핑 연차 내역 테이블 */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        .data-table th {
+            background-color: #fafafa;
+            padding: 10px 12px;
+            font-weight: 500;
+            color: var(--text-sub);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .pill-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            color: #fff;
+        }
+
+        .pill-badge.navy { background-color: var(--status-blue); }
+        .pill-badge.gray { background-color: var(--status-gray); }
+
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <!-- [좌측 영역] 디자인 이미지 시스템 사이드바 -->
+    <div class="sidebar">
+        <div class="user-profile">
+            <span>👤 박현주 사원</span>
+            <span>❯</span>
+        </div>
+        <ul class="menu-list">
+            <li class="menu-item active">🏠 대시보드 홈</li>
+            <li class="menu-item">📈 연차 상세 현황</li>
+            <li class="menu-item">📅 휴가 신청 하기</li>
+            <li class="menu-item">⚙️ 개인 환경 설정</li>
+        </ul>
+    </div>
+
+    <!-- [우측 영역] 상단 탑 바 + 메인 화면 대시보드 -->
+    <div class="main-container">
+        <!-- 최상단 지인 네이비 바 -->
+        <nav class="top-navbar">
+            <div class="logo">ADF 자산운용 임직원 포털</div>
+            <ul class="nav-links">
+                <li>인사행정</li>
+                <li>급여정보</li>
+                <li>결재함</li>
+            </ul>
+            <div class="user-util">
+                <span>🔔</span>
+                <span>👤 박현주 프로 님</span>
+            </div>
+        </nav>
+
+        <!-- 대시보드 콘텐츠 스크롤 바디 -->
+        <div class="content-body">
+            
+            <!-- 상단 요약 카드 그룹 (이미지 매칭 컬러) -->
+            <div class="summary-row">
+                <div class="summary-card navy">

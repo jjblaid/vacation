@@ -1,7 +1,0 @@
-config/database.php
-config/encryption.php
-vendor/
-composer.phar
-test_write.txt
-*.log
-.DS_Store

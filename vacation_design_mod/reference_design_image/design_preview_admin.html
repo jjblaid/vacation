@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADF 관리자 페이지 - 디자인 프리뷰</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ===== NEW DESIGN SYSTEM - Navy/Gray Theme ===== */
+        :root {
+            --primary: #0f2541;
+            --primary-dark: #0a1a30;
+            --primary-light: #1a3a5c;
+            --gray: #7e8b9b;
+            --gray-light: #b0bac6;
+            --bg-main: #f4f7f9;
+            --bg-card: #ffffff;
+            --text-main: #1a1a2e;
+            --text-sub: #555555;
+            --text-muted: #8a8f9a;
+            --border: #dbe2eb;
+            --success: #0f9b58;
+            --success-light: #d4f5e2;
+            --warning: #d97706;
+            --warning-light: #fef3c7;
+            --danger: #dc2626;
+            --danger-light: #fecaca;
+            --info: #2563eb;
+            --info-light: #dbeafe;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+            --shadow: 0 2px 8px rgba(0,0,0,0.04);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,0.08);
+            --radius: 8px;
+            --radius-lg: 12px;
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            background: var(--primary);
+            color: #fff;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-logo { font-size: 16px; font-weight: 700; }
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 14px;
+        }
+        .header-user-info { text-align: right; }
+        .header-user-name { font-weight: 600; }
+        .header-user-role { font-size: 12px; opacity: 0.7; }
+        .btn-header {
+            padding: 6px 12px;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        /* ===== CONTAINER ===== */
+        .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+        /* ===== TABS ===== */
+        .tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 20px;
+            overflow-x: auto;
+            scrollbar-width: thin;
+        }
+        .tab {
+            padding: 10px 18px;
+            background: none;
+            border: none;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.15s;
+            white-space: nowrap;
+            font-family: inherit;
+        }
+        .tab:hover { color: var(--text-main); }
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* ===== SECTION BOX ===== */
+        .section-box {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .section-title { font-size: 15px; font-weight: 700; }
+        .section-body { padding: 20px; }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: inherit;
+            white-space: nowrap;
+        }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-secondary { background: #fff; color: var(--text-main); border: 1px solid var(--border); }
+        .btn-secondary:hover { background: var(--bg-main); }
+        .btn-danger { background: var(--danger); color: #fff; }
+        .btn-success { background: var(--success); color: #fff; }
+        .btn-sm { padding: 6px 12px; font-size: 12px; }
+
+        /* ===== BUTTON GROUP (filter status) ===== */
+        .btn-group {
+            display: flex;
+            gap: 0;
+        }
+        .btn-group .btn {
+            border-radius: 0;
+            border: 1px solid var(--border);
+            margin-left: -1px;
+        }
+        .btn-group .btn:first-child { border-radius: var(--radius) 0 0 var(--radius); margin-left: 0; }
+        .btn-group .btn:last-child { border-radius: 0 var(--radius) var(--radius) 0; }
+        .btn-group .btn.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+            z-index: 1;
+        }
+
+        /* ===== TABLE ===== */
+        .table-wrapper { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th {
+            background: #fafafa;
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 500;
+            color: var(--text-sub);
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+        td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+        }
+        tr:hover { background: #f8fafc; }
+
+        /* ===== BADGES ===== */
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .badge-navy { background: #e8edf4; color: var(--primary); }
+        .badge-success { background: var(--success-light); color: var(--success); }
+        .badge-danger { background: var(--danger-light); color: var(--danger); }
+        .badge-warning { background: var(--warning-light); color: var(--warning); }
+        .badge-gray { background: #f1f5f9; color: var(--text-sub); }
+        .badge-info { background: var(--info-light); color: var(--info); }
+
+        /* ===== ROLE BADGES ===== */
+        .role-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .role-admin { background: #fef3c7; color: #92400e; }
+        .role-manager { background: #e0e7ff; color: #3730a3; }
+        .role-reviewer { background: #dbeafe; color: #1e40af; }
+        .role-ceo { background: #fce7f3; color: #9d174d; }
+        .role-vp { background: #f3e8ff; color: #6b21a8; }
+        .role-user { background: #f1f5f9; color: #475569; }
+
+        /* ===== FORM ===== */
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            color: var(--text-main);
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(15,37,65,0.08);
+        }
+        .form-control-sm { padding: 8px 10px; font-size: 13px; }
+        textarea.form-control { resize: vertical; }
+
+        .checkbox-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            color: var(--text-sub);
+        }
+        .checkbox-label input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary);
+        }
+
+        /* ===== FILTER BAR ===== */
+        .filter-bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .filter-select {
+            padding: 7px 32px 7px 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: inherit;
+            color: var(--text-main);
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23555' d='M6 8L1 3h10z'/%3E%3C/svg%3E") no-repeat right 10px center;
+            appearance: none;
+        }
+
+        /* ===== INFO BOX ===== */
+        .info-box {
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .info-box.gray { background: #f1f5f9; }
+        .info-box.blue { background: #e8edf4; color: var(--primary); }
+        .info-box.warning { background: var(--warning-light); color: #92400e; }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        .modal {
+            background: #fff;
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 500px;
+            box-shadow: var(--shadow-lg);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        .modal-title { font-size: 16px; font-weight: 600; }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--text-muted);
+            width: 28px; height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+        .modal-close:hover { background: var(--bg-main); }
+        .modal-body { padding: 20px; }
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 14px 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* ===== TAB CONTENT (toggle) ===== */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* ===== EMPLOYEE ACTIONS ===== */
+        .actions { display: flex; gap: 4px; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .section-header { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+    <div class="header-logo">⚙️ 관리자 페이지</div>
+    <div class="header-user">
+        <div class="header-user-info">
+            <div class="header-user-name">관리자</div>
+            <div class="header-user-role">시스템관리자</div>
+        </div>
+        <a href="design_preview.html" class="btn-header">← 휴가신청</a>
+        <button class="btn-header">로그아웃</button>
+    </div>
+</header>
+
+<div class="container">
+
+    <!-- TABS -->
+    <div class="tabs">
+        <button class="tab active" onclick="showTab('employees')">👥 사원 관리</button>
+        <button class="tab" onclick="showTab('resigned')">👤 퇴사자</button>
+        <button class="tab" onclick="showTab('resigning')">⚠️ 퇴사예정자</button>
+        <button class="tab" onclick="showTab('annualLeave')">📅 연도별 연차</button>
+        <button class="tab" onclick="showTab('certificate')">📜 증명서 요청</button>
+        <button class="tab" onclick="showTab('support')">📋 지원 요청</button>
+        <button class="tab" onclick="showTab('settings')">⚙️ 환경설정</button>
+        <button class="tab" onclick="showTab('allRequests')">📊 전체 휴가 현황</button>
+    </div>
+
+    <!-- 1. 사원 관리 -->
+    <div id="tab-employees" class="tab-content active">
+        <div class="section-box">
+            <div class="section-header">
+                <span class="section-title">사원 목록</span>
+                <button class="btn btn-primary btn-sm">+ 사원 추가</button>
+            </div>
+            <div class="section-body" style="padding:0;">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>계정</th>
+                                <th>입사일</th>
+                                <th>이름</th>
+                                <th>부서</th>
+                                <th>직급</th>
+                                <th>권한</th>
+                                <th>부여</th>
+                                <th>사용</th>
+                                <th>잔여</th>
+                                <th>상태</th>
+                                <th>작업</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>hong</td>
+                                <td>2019-03-01</td>
+                                <td>홍길동</td>
+                                <td>개발팀</td>
+                                <td>과장</td>
+                                <td><span class="role-badge role-user">사용자</span></td>
+                                <td>15</td>
+                                <td>5</td>
+                                <td>10</td>
+                                <td><span class="badge badge-success">활성</span></td>
+                                <td><div class="actions"><button class="btn btn-secondary btn-sm">수정</button></div></td>
+                            </tr>
+                            <tr>
+                                <td>kim</td>
+                                <td>2015-06-15</td>
+                                <td>김철수</td>
+                                <td>인사팀</td>
+                                <td>부장</td>
+                                <td><span class="role-badge role-manager">관리자</span></td>
+                                <td>15</td>
+                                <td>8</td>
+                                <td>7</td>
+                                <td><span class="badge badge-success">활성</span></td>
+                                <td><div class="actions"><button class="btn btn-secondary btn-sm">수정</button></div></td>
+                            </tr>
+                            <tr>
+                                <td>lee</td>
+                                <td>2020-01-10</td>
+                                <td>이영희</td>
+                                <td>영업팀</td>
+                                <td>대리</td>
+                                <td><span class="role-badge role-reviewer">검토자</span></td>
+                                <td>15</td>
+                                <td>12</td>
+                                <td style="color:var(--danger);font-weight:600;">3</td>
+                                <td><span class="badge badge-success">활성</span></td>
+                                <td><div class="actions"><button class="btn btn-secondary btn-sm">수정</button></div></td>
+                            </tr>
+                            <tr>
+                                <td>choi</td>
+                                <td>2010-04-01</td>
+                                <td>최대표</td>
+                                <td>대표이사</td>
+                                <td>대표이사</td>
+                                <td><span class="role-badge role-ceo">대표이사</span></td>
+                                <td>15</td>
+                                <td>2</td>
+                                <td>13</td>
+                                <td><span class="badge badge-success">활성</span></td>
+                                <td><div class="actions"><button class="btn btn-secondary btn-sm">수정</button></div></td>
+                            </tr>
+                            <tr>
+                                <td>jung</td>
+                                <td>2012-08-20</td>
+                                <td>정부대표</td>
+                                <td>경영지원팀</td>
+                                <td>부대표</td>
+                                <td><span class="role-badge role-vp">부대표</span></td>
+                                <td>15</td>
+                                <td>6</td>
+                                <td>9</td>
+                                <td><span class="badge badge-success">활성</span></td>
+                                <td><div class="actions"><button class="btn btn-secondary btn-sm">수정</button></div></td>
+                            </tr>
+                            <tr>
+                                <td>sys</td>
+                                <td>2018-02-01</td>
+                                <td>시스템관리</td>
+                                <td>IT팀</td>
+                                <td>주임</td>
+                                <td><span class="role-badge role-admin">시스템관리자</span></td>
+                                <td>15</td>
+                                <td>10</td>
+                                <td>5</td>
+                                <td><span class="badge badge-success">활성</span></td>
+                                <td><div class="actions"><button class="btn btn-secondary btn-sm">수정</button></div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. 퇴사자 -->
+    <div id="tab-resigned" class="tab-content">
+        <div class="section-box">
+            <div class="section-header">
+                <span class="section-title">퇴사자 목록</span>
+            </div>
+            <div class="section-body" style="padding:0;">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>계정</th>
+                                <th>이름</th>
+                                <th>부서</th>
+                                <th>직급</th>
+                                <th>입사일</th>
+                                <th>퇴직일</th>
+                                <th>작업</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>yoon</td>
+                                <td>윤성환</td>
+                                <td>영업팀</td>
+                                <td>대리</td>
+                                <td>2018-03-01</td>
+                                <td>2025-12-31</td>
+                                <td><button class="btn btn-secondary btn-sm">휴가내역</button></td>
+                            </tr>
+                            <tr>
+                                <td>kwon</td>
+                                <td>권혁수</td>
+                                <td>개발팀</td>
+                                <td>주임</td>
+                                <td>2020-06-15</td>
+                                <td>2026-02-28</td>
+                                <td><button class="btn btn-secondary btn-sm">휴가내역</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. 퇴사예정자 -->
+    <div id="tab-resigning" class="tab-content">
+        <div class="section-box">
+            <div class="section-header">
+                <span class="section-title">퇴사예정자 관리</span>
+            </div>
+            <div class="section-body" style="padding:0;">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>계정</th>
+                                <th>이름</th>
+                                <th>부서</th>
+                                <th>직급</th>
+                                <th>입사일</th>
+                                <th>보전연차(잔여)</th>
+                                <th>잔여연차</th>
+                                <th>합계</th>
+                                <th>작업</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>ahn</td>
+                                <td>안지훈</td>
+                                <td>마케팅팀</td>
+                                <td>과장</td>
+                                <td>2017-05-01</td>
+                                <td>3</td>
+                                <td>5</td>
+                                <td style="font-weight:600;">8</td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="btn btn-secondary btn-sm">휴가내역</button>
+                                        <button class="btn btn-secondary btn-sm">퇴직원 출력</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. 연도별 연차 -->
+    <div id="tab-annualLeave" class="tab-content">
+        <div class="section-box">
+            <div class="section-header">
+                <span class="section-title">📅 연도별 연차 관리</span>
+                <div class="filter-bar">
+                    <select class="filter-select">
+                        <option>2026</option>
+                        <option>2025</option>
+                    </select>
+                </div>
+            </div>
+            <div class="section-body" style="padding:0;">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>사원명</th>
+                                <th>계정</th>
+                                <th>입사일</th>
+                                <th>부서</th>
+                                <th>직급</th>
+                                <th>부여연차</th>
+                                <th>사용연차</th>
+                                <th>잔여연차</th>
+                                <th>작업</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>홍길동</td>
+                                <td>hong</td>
+                                <td>2019-03-01</td>
+                                <td>개발팀</td>
+                                <td>과장</td>
+                                <td>15</td>
+                                <td>5</td>
+                                <td>10</td>
+                                <td><button class="btn btn-secondary btn-sm">수정</button></td>
+                            </tr>
+                            <tr>
+                                <td>김철수</td>
+                                <td>kim</td>
+                                <td>2015-06-15</td>
+                                <td>인사팀</td>
+                                <td>부장</td>
+                                <td>15</td>
+                                <td>8</td>
+                                <td>7</td>
+                                <td><button class="btn btn-secondary btn-sm">수정</button></td>
+                            </tr>
+                            <tr>
+                                <td>이영희</td>
+                                <td>lee</td>
+                                <td>2020-01-10</td>
+                                <td>영업팀</td>
+                                <td>대리</td>
+                                <td>15</td>
+                                <td>12</td>
+                                <td style="color:var(--danger);font-weight:600;">3</td>
+                                <td><button class="btn btn-secondary btn-sm">수정</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. 증명서 요청 -->
+    <div id="tab-certificate" class="tab-content">
+        <div class="section-box">
+            <div class="section-header">
+                <span class="section-title">증명서 발급 요청</span>
+            </div>
+            <div class="section-body" style="padding:0;">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>신청자</th>
+                                <th>소속</th>
+                                <th>증명서</th>
+                                <th>주민번호</th>
+                                <th>징계</th>
+                                <th>업무기재</th>
+                                <th>언어</th>
+                                <th>신청일시</th>
+                                <th>상태</th>
+                                <th>작업</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>홍길동</td>
+                                <td>개발팀</td>
+                                <td>재직증명서</td>
+                                <td>
+                                    <button class="btn btn-secondary btn-sm">🔒 확인</button>
+                                </td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>국문</td>
+                                <td>2026-08-25 14:30</td>
+                                <td><span class="badge badge-info">요청</span></td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="btn btn-secondary btn-sm">완료</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>이영희</td>
+                                <td>영업팀</td>
+                                <td>경력증명서</td>
+                                <td>
+                                    <button class="btn btn-secondary btn-sm">🔒 확인</button>
+                                </td>
+                                <td>포함</td>
+                                <td>영문</td>
+                                <td>국문, 영문</td>
+                                <td>2026-08-24 10:15</td>
+                                <td><span class="badge badge-success">완료</span></td>
+                                <td>-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. 지원 요청 -->
+    <div id="tab-support" class="tab-content">
+        <div class="section-box">
+            <div class="section-header">
+                <span class="section-title">행정지원 요청</span>
+            </div>
+            <div class="section-body" style="padding:0;">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>신청자</th>
+                                <th>소속</th>
+                                <th>요청종류</th>
+                                <th>요청사항</th>
+                                <th>신청일시</th>
+                                <th>상태</th>
+                                <th>비고</th>
+                                <th>작업</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>김철수</td>
+                                <td>인사팀</td>
+                                <td>사원증 발급</td>
+                                <td>사원증 분실로 재발급 요청</td>
+                                <td>2026-08-26 09:00</td>
+                                <td><span class="badge badge-info">요청</span></td>
+                                <td>-</td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="btn btn-success btn-sm">완료</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>박영수</td>
+                                <td>기획팀</td>
+                                <td>명함 발급</td>
+                                <td>명함 200매</td>
+                                <td>2026-08-25 16:20</td>
+                                <td><span class="badge badge-success">완료</span></td>
+                                <td>8/27 배포 예정</td>
+                                <td>-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. 환경설정 -->
+    <div id="tab-settings" class="tab-content">
+        <div class="section-box">
+            <div class="section-header">
+                <span class="section-title">SMTP 설정</span>
+            </div>
+            <div class="section-body">
+                <div style="max-width:480px;">
+                    <div class="form-group">
+                        <label>SMTP 호스트</label>
+                        <input type="text" class="form-control" placeholder="smtp.gmail.com" value="smtp.gmail.com">
+                    </div>
+                    <div class="form-group">
+                        <label>SMTP 포트</label>
+                        <input type="text" class="form-control form-control-sm" style="width:120px;" value="587">
+                    </div>
+                    <div class="form-group">
+                        <label>계정</label>
+                        <input type="text" class="form-control" placeholder="user@gmail.com" value="admin@adf.com">
+                    </div>
+                    <div class="form-group">
+                        <label>암호</label>
+                        <input type="password" class="form-control" value="password123">
+                    </div>
+                    <div class="form-group">
+                        <label>암호화 방식</label>
+                        <select class="filter-select" style="width:140px;">
+                            <option selected>TLS</option>
+                            <option>SSL</option>
+                            <option>없음</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>발신 이메일</label>
+                        <input type="email" class="form-control" value="noreply@adf.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label"><input type="checkbox" checked> SMTP 인증 사용</label>
+                    </div>
+                    <div style="display:flex;gap:8px;margin-top:20px;">
+                        <button class="btn btn-primary">저장</button>
+                        <button class="btn btn-secondary">테스트 발송</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 하위 탭 예시 -->
+        <div class="section-box">
+            <div class="section-header">
+                <span class="section-title">📋 휴가 유형 관리</span>
+                <button class="btn btn-primary btn-sm">+ 유형 추가</button>
+            </div>
+            <div class="section-body" style="padding:0;">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>순서</th>
+                                <th>유형명</th>
+                                <th>차감일수</th>
+                                <th>최대일수</th>
+                                <th>차감 대상</th>
+                                <th>주말/공휴일</th>
+                                <th>색상</th>
+                                <th>작업</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>연차</td>
+                                <td>1</td>
+                                <td>-</td>
+                                <td>연차</td>
+                                <td>미포함</td>
+                                <td><span style="display:inline-block;width:16px;height:16px;border-radius:3px;background:#0f2541;vertical-align:middle;"></span></td>
+                                <td><div class="actions"><button class="btn btn-secondary btn-sm">수정</button><button class="btn btn-secondary btn-sm" style="color:var(--danger);">삭제</button></div></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>반차</td>
+                                <td>0.5</td>
+                                <td>-</td>
+                                <td>연차</td>
+                                <td>미포함</td>
+                                <td><span style="display:inline-block;width:16px;height:16px;border-radius:3px;background:#7e8b9b;vertical-align:middle;"></span></td>
+                                <td><div class="actions"><button class="btn btn-secondary btn-sm">수정</button><button class="btn btn-secondary btn-sm" style="color:var(--danger);">삭제</button></div></td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>경조사</td>
+                                <td>1</td>
+                                <td>20</td>
+                                <td>없음</td>
+                                <td>미포함</td>
+                                <td><span style="display:inline-block;width:16px;height:16px;border-radius:3px;background:#d97706;vertical-align:middle;"></span></td>
+                                <td><div class="actions"><button class="btn btn-secondary btn-sm">수정</button><button class="btn btn-secondary btn-sm" style="color:var(--danger);">삭제</button></div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. 전체 휴가 현황 -->
+    <div id="tab-allRequests" class="tab-content">
+        <div class="section-box">
+            <div class="section-header">
+                <span class="section-title">전체 휴가 현황</span>
+            </div>
+            <div class="section-body" style="padding-bottom:0;">
+                <div class="btn-group">
+                    <button class="btn btn-sm active">전체</button>
+                    <button class="btn btn-sm btn-secondary">신청 (미완료)</button>
+                    <button class="btn btn-sm btn-secondary">승인</button>
+                    <button class="btn btn-sm btn-secondary">취소</button>
+                </div>
+            </div>
+            <div class="section-body" style="padding:0;">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>사원</th>
+                                <th>부서</th>
+                                <th>기간</th>
+                                <th>유형</th>
+                                <th>일수</th>
+                                <th>사유</th>
+                                <th>상태</th>
+                                <th>작업</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>홍길동</td>
+                                <td>개발팀</td>
+                                <td>2026-08-09</td>
+                                <td>연차</td>
+                                <td>1일</td>
+                                <td>개인 사유</td>
+                                <td><span class="badge badge-success">승인</span></td>
+                                <td><button class="btn btn-secondary btn-sm">상세</button></td>
+                            </tr>
+                            <tr>
+                                <td>이영희</td>
+                                <td>영업팀</td>
+                                <td>2026-08-20 ~ 08-22</td>
+                                <td>연차</td>
+                                <td>3일</td>
+                                <td>여행</td>
+                                <td><span class="badge badge-navy">신청</span></td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="btn btn-success btn-sm">승인</button>
+                                        <button class="btn btn-secondary btn-sm" style="color:var(--danger);">반려</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>박영수</td>
+                                <td>기획팀</td>
+                                <td>2026-08-14</td>
+                                <td>반차(오후)</td>
+                                <td>0.5일</td>
+                                <td>병원 방문</td>
+                                <td><span class="badge badge-success">승인</span></td>
+                                <td><button class="btn btn-secondary btn-sm">상세</button></td>
+                            </tr>
+                            <tr>
+                                <td>김철수</td>
+                                <td>인사팀</td>
+                                <td>2026-08-28 ~ 08-29</td>
+                                <td>연차</td>
+                                <td>2일</td>
+                                <td>개인 사유</td>
+                                <td><span class="badge badge-navy">신청</span></td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="btn btn-success btn-sm">승인</button>
+                                        <button class="btn btn-secondary btn-sm" style="color:var(--danger);">반려</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function showTab(name) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>
