@@ -171,7 +171,7 @@ function autoCreateNextYearLeave() {
 function changePassword() {
     requireAuth();
     requireCsrfToken();
-    
+    global $_PARSED_BODY;
     $user = $_SESSION['user'];
     
     $currentPassword = $_PARSED_BODY['current_password'] ?? '';
