@@ -127,9 +127,14 @@ function initAdminEventListeners() {
     $('pwVerifyInput')?.addEventListener('keydown', function(e) { if (e.key === 'Enter') confirmPasswordVerify(); });
     // Employee modal
     $('btnCloseEmployee')?.addEventListener('click', closeEmployeeModal);
-    $('empIsActive')?.addEventListener('change', function() {
-        document.getElementById('empResignDate').classList.toggle('hidden', !this.checked);
-    });
+    function updateResignFieldsVisibility() {
+        const isResignedChecked = document.getElementById('empIsActive')?.checked;
+        const isResigningChecked = document.getElementById('empIsResigning')?.checked;
+        document.getElementById('empResignDate')?.classList.toggle('hidden', !isResignedChecked && !isResigningChecked);
+        document.getElementById('empSeveranceGroup')?.classList.toggle('hidden', !isResigningChecked);
+    }
+    $('empIsActive')?.addEventListener('change', updateResignFieldsVisibility);
+    $('empIsResigning')?.addEventListener('change', updateResignFieldsVisibility);
     $('btnCancelEmployee')?.addEventListener('click', closeEmployeeModal);
     $('btnSaveEmployee')?.addEventListener('click', saveEmployee);
     // Type modal
@@ -368,7 +373,7 @@ async function loadResigningEmployees() {
                     <td>${escapeHtml(e.department_name)}</td>
                     <td>${escapeHtml(e.position_name)}</td>
                     <td>${e.hire_date}</td>
-                    <td>${e.resign_date}</td>
+                    <td>${escapeHtml(e.resignation_date || '-')}</td>
                     <td>
                         <button class="btn btn-sm btn-secondary" data-action="editEmployee" data-id="${e.id}">수정</button>
                     </td>
@@ -526,15 +531,20 @@ async         function editEmployee(id) {
     document.getElementById('empResignationDate').value = emp.resignation_date || '';
     document.getElementById('empVisibleToExec').checked = emp.visible_to_exec == 1;
     
-    // Show resigning-related fields if employee is resigning or if we're checking the resigning checkbox
+    // Show resigning-related fields if employee is resigning or if employee is resigned
     const isResigning = emp.is_resigning == 1;
+    const isResigned = emp.is_active == 0;
     document.getElementById('empResignGroup').classList.remove('hidden');
-    document.getElementById('empSeveranceGroup').classList.remove('hidden');
-    if (isResigning) {
+    if (isResigning || isResigned) {
         document.getElementById('empResignDate').classList.remove('hidden');
-        document.getElementById('empSeveranceLeave').value = emp.severance_leave || '';
     } else {
         document.getElementById('empResignDate').classList.add('hidden');
+    }
+    if (isResigning) {
+        document.getElementById('empSeveranceGroup').classList.remove('hidden');
+        document.getElementById('empSeveranceLeave').value = emp.severance_leave || '';
+    } else {
+        document.getElementById('empSeveranceGroup').classList.add('hidden');
         document.getElementById('empSeveranceLeave').value = '';
     }
 }
@@ -560,7 +570,7 @@ const data = {
     resident_no: document.getElementById('empResidentNo').type === 'password' ? '' : getVal('empResidentNo'),
     hire_date: getVal('empHireDate'),
     is_active: document.getElementById('empIsActive').checked ? '0' : '1',
-    resignation_date: document.getElementById('empIsActive').checked ? getVal('empResignationDate') : '',
+    resignation_date: (document.getElementById('empIsActive').checked || document.getElementById('empIsResigning').checked) ? getVal('empResignationDate') : '',
     is_resigning: document.getElementById('empIsResigning').checked ? '1' : '0',
     severance_leave: parseFloat(getVal('empSeveranceLeave')) || 0,
     visible_to_exec: document.getElementById('empVisibleToExec').checked ? '1' : '0'
